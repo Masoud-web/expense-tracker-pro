@@ -2,7 +2,7 @@ const form = document.getElementById("transaction-form");
 const descriptionInput = document.getElementById("description");
 const amountInput = document.getElementById("amount");
 const typeInput = document.getElementById("type");
-
+const dateInput = document.getElementById("date");
 const balanceElement = document.getElementById("balance");
 const incomeElement = document.getElementById("income");
 const expensesElement = document.getElementById("expenses");
