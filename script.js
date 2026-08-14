@@ -34,7 +34,9 @@ const translations = {
         expenseType: "Expense",
         invalid: "Please enter a valid description and amount.",
         darkMode: "🌙 Dark Mode",
-        lightMode: "☀️ Light Mode"
+        lightMode: "☀️ Light Mode",
+edit: "✏️ Edit",
+delete: "🗑️ Delete"
     },
 
     de: {
@@ -57,10 +59,74 @@ const translations = {
         expenseType: "Ausgabe",
         invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
         darkMode: "🌙 Dunkelmodus",
-        lightMode: "☀️ Hellmodus"
+        lightMode: "☀️ Hellmodus",
+edit: "✏️ Bearbeiten",
+delete: "🗑️ Löschen"
+
     }
 };
+transactionList.addEventListener("click", function (event) {
+    const editButton = event.target.closest(".edit-btn");
 
+    if (editButton) {
+        const id = Number(editButton.dataset.id);
+
+        const transaction = transactions.find(function (transaction) {
+            return transaction.id === id;
+        });
+
+        if (!transaction) {
+            return;
+        }
+
+        const newDescription = prompt(
+            translations[currentLanguage].description,
+            transaction.description
+        );
+
+        if (newDescription === null) {
+            return;
+        }
+
+        const newAmount = prompt(
+            translations[currentLanguage].amount,
+            transaction.amount
+        );
+
+        if (newAmount === null) {
+            return;
+        }
+
+        const amount = Number(newAmount);
+
+        if (!newDescription.trim() || amount <= 0) {
+            alert(translations[currentLanguage].invalid);
+            return;
+        }
+
+        transaction.description = newDescription.trim();
+        transaction.amount = amount;
+
+        saveTransactions();
+        updateUI();
+    }
+});
+transactionList.addEventListener("click", function (event) {
+    const deleteButton = event.target.closest(".delete-btn");
+
+    if (!deleteButton) {
+        return;
+    }
+
+    const id = Number(deleteButton.dataset.id);
+
+    transactions = transactions.filter(function (transaction) {
+        return transaction.id !== id;
+    });
+
+    saveTransactions();
+    updateUI();
+});
 let currentLanguage =
     localStorage.getItem("expenseTrackerLanguage") || "en";
 
@@ -213,16 +279,26 @@ function updateUI() {
                 ? translations[currentLanguage].incomeType
                 : translations[currentLanguage].expenseType;
 
-        li.innerHTML = `
-            <div class="transaction-info">
-                <h3>${transaction.description}</h3>
-                <span>${typeText}</span>
-            </div>
+       li.innerHTML = `
+    <div class="transaction-info">
+        <h3>${transaction.description}</h3>
+        <span>${typeText}</span>
+    </div>
 
-            <div class="transaction-amount">
-                ${sign}$${transaction.amount.toFixed(2)}
-            </div>
-        `;
+    <div class="transaction-amount">
+        ${sign}$${transaction.amount.toFixed(2)}
+    </div>
+
+    <div class="transaction-actions">
+        <button class="edit-btn" data-id="${transaction.id}">
+            ${translations[currentLanguage].edit}
+        </button>
+
+        <button class="delete-btn" data-id="${transaction.id}">
+            ${translations[currentLanguage].delete}
+        </button>
+    </div>
+`;
 
         transactionList.appendChild(li);
     });
