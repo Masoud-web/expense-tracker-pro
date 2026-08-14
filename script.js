@@ -9,10 +9,11 @@ const expensesElement = document.getElementById("expenses");
 const transactionList = document.getElementById("transaction-list");
 const languageSelect = document.getElementById("language-select");
 const themeToggle = document.getElementById("theme-toggle");
-
+const filterButtons =
+    document.querySelectorAll(".filter-btn");
 let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
-
+let currentFilter = "all";
 const translations = {
     en: {
         language: "Language:",
@@ -252,6 +253,22 @@ themeToggle.addEventListener("click", function () {
     darkMode = !darkMode;
     applyTheme();
 });
+filterButtons.forEach(function (button) {
+
+    button.addEventListener("click", function () {
+
+        currentFilter = button.dataset.filter;
+
+        filterButtons.forEach(function (btn) {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        updateUI();
+    });
+
+});
 let expenseChart;
 
 function updateChart(income, expenses) {
@@ -296,6 +313,13 @@ function updateUI() {
     transactionList.innerHTML = "";
 
     transactions.forEach(function (transaction) {
+
+    if (
+        currentFilter !== "all" &&
+        transaction.type !== currentFilter
+    ) {
+        return;
+    }
 
         if (transaction.type === "income") {
             income += transaction.amount;
