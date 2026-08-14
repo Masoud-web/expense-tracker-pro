@@ -11,9 +11,11 @@ const languageSelect = document.getElementById("language-select");
 const themeToggle = document.getElementById("theme-toggle");
 const filterButtons =
     document.querySelectorAll(".filter-btn");
+const searchInput = document.getElementById("search-input");
 let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
 let currentFilter = "all";
+let searchText = "";
 const translations = {
     en: {
         language: "Language:",
@@ -282,6 +284,13 @@ filterButtons.forEach(function (button) {
     });
 
 });
+searchInput.addEventListener("input", function () {
+
+    searchText = searchInput.value.toLowerCase();
+
+    updateUI();
+
+});
 let expenseChart;
 
 function updateChart(income, expenses) {
@@ -339,6 +348,14 @@ function updateUI() {
     ) {
         return;
     }
+if (
+    searchText &&
+    !transaction.description
+        .toLowerCase()
+        .includes(searchText)
+) {
+    return;
+}
 
         const li = document.createElement("li");
 
