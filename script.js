@@ -314,18 +314,18 @@ function updateUI() {
 
     transactions.forEach(function (transaction) {
 
+    if (transaction.type === "income") {
+        income += transaction.amount;
+    } else {
+        expenses += transaction.amount;
+    }
+
     if (
         currentFilter !== "all" &&
         transaction.type !== currentFilter
     ) {
         return;
     }
-
-        if (transaction.type === "income") {
-            income += transaction.amount;
-        } else {
-            expenses += transaction.amount;
-        }
 
         const li = document.createElement("li");
 
