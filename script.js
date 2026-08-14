@@ -146,7 +146,8 @@ function updateLanguage() {
     const t = translations[currentLanguage];
 
     document.documentElement.lang = currentLanguage;
-
+document.getElementById("chart-title").textContent =
+    t.chartTitle;
     document.querySelector(".language-switcher label").textContent =
         t.language;
 
@@ -251,6 +252,42 @@ themeToggle.addEventListener("click", function () {
     darkMode = !darkMode;
     applyTheme();
 });
+let expenseChart;
+
+function updateChart(income, expenses) {
+    const ctx = document.getElementById("expense-chart");
+
+    if (expenseChart) {
+        expenseChart.destroy();
+    }
+
+    expenseChart = new Chart(ctx, {
+        type: "doughnut",
+
+        data: {
+            labels: [
+                translations[currentLanguage].income,
+                translations[currentLanguage].expenses
+            ],
+
+            datasets: [{
+                data: [income, expenses]
+            }]
+        },
+
+      options: {
+    responsive: true,
+
+    plugins: {
+        legend: {
+            labels: {
+                color: darkMode ? "#ffffff" : "#333333"
+            }
+        }
+    }
+}
+    });
+}
 
 function updateUI() {
     let income = 0;
@@ -313,6 +350,7 @@ function updateUI() {
 
     expensesElement.textContent =
         `$${expenses.toFixed(2)}`;
+updateChart(income, expenses);
 }
 
 updateLanguage();
