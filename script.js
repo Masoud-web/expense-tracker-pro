@@ -9,10 +9,11 @@ const expensesElement = document.getElementById("expenses");
 const transactionList = document.getElementById("transaction-list");
 const languageSelect = document.getElementById("language-select");
 const themeToggle = document.getElementById("theme-toggle");
-
+const filterButtons =
+    document.querySelectorAll(".filter-btn");
 let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
-
+let currentFilter = "all";
 const translations = {
     en: {
         language: "Language:",
@@ -34,9 +35,12 @@ const translations = {
         expenseType: "Expense",
         invalid: "Please enter a valid description and amount.",
         darkMode: "🌙 Dark Mode",
-        lightMode: "☀️ Light Mode",
+lightMode: "☀️ Light Mode",
 edit: "✏️ Edit",
-delete: "🗑️ Delete"
+delete: "🗑️ Delete",
+filterAll: "All",
+filterIncome: "Income",
+filterExpense: "Expenses"
     },
 
     de: {
@@ -59,9 +63,12 @@ delete: "🗑️ Delete"
         expenseType: "Ausgabe",
         invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
         darkMode: "🌙 Dunkelmodus",
-        lightMode: "☀️ Hellmodus",
+lightMode: "☀️ Hellmodus",
 edit: "✏️ Bearbeiten",
-delete: "🗑️ Löschen"
+delete: "🗑️ Löschen",
+filterAll: "Alle",
+filterIncome: "Einnahmen",
+filterExpense: "Ausgaben"
 
     }
 };
@@ -187,7 +194,14 @@ document.getElementById("chart-title").textContent =
 
     document.getElementById("transactions-title").textContent =
         t.transactions;
+document.querySelector('[data-filter="all"]').textContent =
+    t.filterAll;
 
+document.querySelector('[data-filter="income"]').textContent =
+    t.filterIncome;
+
+document.querySelector('[data-filter="expense"]').textContent =
+    t.filterExpense;
     updateThemeButton();
 }
 
@@ -252,6 +266,22 @@ themeToggle.addEventListener("click", function () {
     darkMode = !darkMode;
     applyTheme();
 });
+filterButtons.forEach(function (button) {
+
+    button.addEventListener("click", function () {
+
+        currentFilter = button.dataset.filter;
+
+        filterButtons.forEach(function (btn) {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+        updateUI();
+    });
+
+});
 let expenseChart;
 
 function updateChart(income, expenses) {
@@ -297,11 +327,18 @@ function updateUI() {
 
     transactions.forEach(function (transaction) {
 
-        if (transaction.type === "income") {
-            income += transaction.amount;
-        } else {
-            expenses += transaction.amount;
-        }
+    if (transaction.type === "income") {
+        income += transaction.amount;
+    } else {
+        expenses += transaction.amount;
+    }
+
+    if (
+        currentFilter !== "all" &&
+        transaction.type !== currentFilter
+    ) {
+        return;
+    }
 
         const li = document.createElement("li");
 
