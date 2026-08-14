@@ -35,9 +35,12 @@ const translations = {
         expenseType: "Expense",
         invalid: "Please enter a valid description and amount.",
         darkMode: "🌙 Dark Mode",
-        lightMode: "☀️ Light Mode",
+lightMode: "☀️ Light Mode",
 edit: "✏️ Edit",
-delete: "🗑️ Delete"
+delete: "🗑️ Delete",
+filterAll: "All",
+filterIncome: "Income",
+filterExpense: "Expenses"
     },
 
     de: {
@@ -60,9 +63,12 @@ delete: "🗑️ Delete"
         expenseType: "Ausgabe",
         invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
         darkMode: "🌙 Dunkelmodus",
-        lightMode: "☀️ Hellmodus",
+lightMode: "☀️ Hellmodus",
 edit: "✏️ Bearbeiten",
-delete: "🗑️ Löschen"
+delete: "🗑️ Löschen",
+filterAll: "Alle",
+filterIncome: "Einnahmen",
+filterExpense: "Ausgaben"
 
     }
 };
@@ -188,7 +194,14 @@ document.getElementById("chart-title").textContent =
 
     document.getElementById("transactions-title").textContent =
         t.transactions;
+document.querySelector('[data-filter="all"]').textContent =
+    t.filterAll;
 
+document.querySelector('[data-filter="income"]').textContent =
+    t.filterIncome;
+
+document.querySelector('[data-filter="expense"]').textContent =
+    t.filterExpense;
     updateThemeButton();
 }
 
