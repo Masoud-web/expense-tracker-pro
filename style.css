@@ -192,3 +192,75 @@ button:hover {
         gap: 10px;
     }
 }
+/* ================================
+   Dark Mode
+================================ */
+
+body.dark-mode {
+    background: #121212;
+    color: #f5f5f5;
+}
+
+body.dark-mode .container {
+    background: #1e1e1e;
+}
+
+body.dark-mode header h1,
+body.dark-mode header p,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode label {
+    color: #f5f5f5;
+}
+
+body.dark-mode .balance-card,
+body.dark-mode .summary-box,
+body.dark-mode .form-section,
+body.dark-mode .transactions-section {
+    background: #242424;
+    color: #f5f5f5;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+    background: #333333;
+    color: #ffffff;
+    border-color: #555555;
+}
+
+body.dark-mode input::placeholder {
+    color: #aaaaaa;
+}
+
+body.dark-mode .transaction {
+    background: #2d2d2d;
+    color: #ffffff;
+}
+
+body.dark-mode .transaction-info span {
+    color: #cccccc;
+}
+
+body.dark-mode .language-switcher,
+body.dark-mode .theme-switcher {
+    color: #ffffff;
+}
+
+body.dark-mode #language-select {
+    background: #333333;
+    color: #ffffff;
+    border-color: #555555;
+}
+
+#theme-toggle {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+#theme-toggle:hover {
+    transform: translateY(-1px);
+}

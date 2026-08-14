@@ -8,8 +8,10 @@ const incomeElement = document.getElementById("income");
 const expensesElement = document.getElementById("expenses");
 const transactionList = document.getElementById("transaction-list");
 const languageSelect = document.getElementById("language-select");
+const themeToggle = document.getElementById("theme-toggle");
 
-let transactions = JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
+let transactions =
+    JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
 
 const translations = {
     en: {
@@ -30,7 +32,9 @@ const translations = {
         transactions: "Transactions",
         incomeType: "Income",
         expenseType: "Expense",
-        invalid: "Please enter a valid description and amount."
+        invalid: "Please enter a valid description and amount.",
+        darkMode: "🌙 Dark Mode",
+        lightMode: "☀️ Light Mode"
     },
 
     de: {
@@ -51,13 +55,92 @@ const translations = {
         transactions: "Transaktionen",
         incomeType: "Einnahme",
         expenseType: "Ausgabe",
-        invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein."
+        invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
+        darkMode: "🌙 Dunkelmodus",
+        lightMode: "☀️ Hellmodus"
     }
 };
 
-let currentLanguage = localStorage.getItem("expenseTrackerLanguage") || "en";
+let currentLanguage =
+    localStorage.getItem("expenseTrackerLanguage") || "en";
 
 languageSelect.value = currentLanguage;
+
+let darkMode =
+    localStorage.getItem("expenseTrackerDarkMode") === "true";
+
+function saveTransactions() {
+    localStorage.setItem(
+        "expenseTrackerTransactions",
+        JSON.stringify(transactions)
+    );
+}
+
+function updateLanguage() {
+    const t = translations[currentLanguage];
+
+    document.documentElement.lang = currentLanguage;
+
+    document.querySelector(".language-switcher label").textContent =
+        t.language;
+
+    document.getElementById("app-title").textContent = t.title;
+    document.getElementById("app-subtitle").textContent = t.subtitle;
+    document.getElementById("balance-title").textContent = t.balance;
+
+    document.getElementById("income-title").textContent = t.income;
+    document.getElementById("expense-title").textContent = t.expenses;
+
+    document.getElementById("add-title").textContent =
+        t.addTransaction;
+
+    document.getElementById("description-label").textContent =
+        t.description;
+
+    document.getElementById("amount-label").textContent =
+        t.amount;
+
+    document.getElementById("type-label").textContent =
+        t.type;
+
+    descriptionInput.placeholder =
+        t.descriptionPlaceholder;
+
+    amountInput.placeholder =
+        t.amountPlaceholder;
+
+    document.getElementById("income-option").textContent =
+        t.incomeOption;
+
+    document.getElementById("expense-option").textContent =
+        t.expenseOption;
+
+    document.getElementById("add-button").textContent =
+        t.addTransaction;
+
+    document.getElementById("transactions-title").textContent =
+        t.transactions;
+
+    updateThemeButton();
+}
+
+function updateThemeButton() {
+    const t = translations[currentLanguage];
+
+    themeToggle.textContent =
+        darkMode ? t.lightMode : t.darkMode;
+}
+
+function applyTheme() {
+    document.body.classList.toggle("dark-mode", darkMode);
+
+    localStorage.setItem(
+        "expenseTrackerDarkMode",
+        darkMode
+    );
+
+    updateThemeButton();
+}
 
 form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -98,43 +181,10 @@ languageSelect.addEventListener("change", function () {
     updateUI();
 });
 
-function saveTransactions() {
-    localStorage.setItem(
-        "expenseTrackerTransactions",
-        JSON.stringify(transactions)
-    );
-}
-
-function updateLanguage() {
-    const t = translations[currentLanguage];
-
-    document.documentElement.lang = currentLanguage;
-
-    document.querySelector(".language-switcher label").textContent = t.language;
-
-    document.getElementById("app-title").textContent = t.title;
-    document.getElementById("app-subtitle").textContent = t.subtitle;
-    document.getElementById("balance-title").textContent = t.balance;
-
-    document.getElementById("income-title").textContent = t.income;
-    document.getElementById("expense-title").textContent = t.expenses;
-
-    document.getElementById("add-title").textContent = t.addTransaction;
-
-    document.getElementById("description-label").textContent = t.description;
-    document.getElementById("amount-label").textContent = t.amount;
-    document.getElementById("type-label").textContent = t.type;
-
-    descriptionInput.placeholder = t.descriptionPlaceholder;
-    amountInput.placeholder = t.amountPlaceholder;
-
-    document.getElementById("income-option").textContent = t.incomeOption;
-    document.getElementById("expense-option").textContent = t.expenseOption;
-
-    document.getElementById("add-button").textContent = t.addTransaction;
-
-    document.getElementById("transactions-title").textContent = t.transactions;
-}
+themeToggle.addEventListener("click", function () {
+    darkMode = !darkMode;
+    applyTheme();
+});
 
 function updateUI() {
     let income = 0;
@@ -152,9 +202,11 @@ function updateUI() {
 
         const li = document.createElement("li");
 
-        li.className = `transaction ${transaction.type}`;
+        li.className =
+            `transaction ${transaction.type}`;
 
-        const sign = transaction.type === "income" ? "+" : "-";
+        const sign =
+            transaction.type === "income" ? "+" : "-";
 
         const typeText =
             transaction.type === "income"
@@ -177,10 +229,16 @@ function updateUI() {
 
     const balance = income - expenses;
 
-    balanceElement.textContent = `$${balance.toFixed(2)}`;
-    incomeElement.textContent = `$${income.toFixed(2)}`;
-    expensesElement.textContent = `$${expenses.toFixed(2)}`;
+    balanceElement.textContent =
+        `$${balance.toFixed(2)}`;
+
+    incomeElement.textContent =
+        `$${income.toFixed(2)}`;
+
+    expensesElement.textContent =
+        `$${expenses.toFixed(2)}`;
 }
 
 updateLanguage();
 updateUI();
+applyTheme();
