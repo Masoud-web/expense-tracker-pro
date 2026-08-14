@@ -9,7 +9,7 @@ const expensesElement = document.getElementById("expenses");
 const transactionList = document.getElementById("transaction-list");
 const languageSelect = document.getElementById("language-select");
 
-let transactions = [];
+let transactions = JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
 
 const translations = {
     en: {
@@ -55,7 +55,9 @@ const translations = {
     }
 };
 
-let currentLanguage = "en";
+let currentLanguage = localStorage.getItem("expenseTrackerLanguage") || "en";
+
+languageSelect.value = currentLanguage;
 
 form.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -78,6 +80,7 @@ form.addEventListener("submit", function (event) {
 
     transactions.push(transaction);
 
+    saveTransactions();
     updateUI();
 
     form.reset();
@@ -85,9 +88,22 @@ form.addEventListener("submit", function (event) {
 
 languageSelect.addEventListener("change", function () {
     currentLanguage = languageSelect.value;
+
+    localStorage.setItem(
+        "expenseTrackerLanguage",
+        currentLanguage
+    );
+
     updateLanguage();
     updateUI();
 });
+
+function saveTransactions() {
+    localStorage.setItem(
+        "expenseTrackerTransactions",
+        JSON.stringify(transactions)
+    );
+}
 
 function updateLanguage() {
     const t = translations[currentLanguage];
