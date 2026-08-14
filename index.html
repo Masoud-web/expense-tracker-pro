@@ -11,35 +11,46 @@
 
     <div class="container">
 
+        <div class="language-switcher">
+            <label for="language-select">Language:</label>
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+            </select>
+        </div>
+
         <header>
-            <h1>Expense Tracker</h1>
-            <p>Track your income and expenses</p>
+            <h1 id="app-title">Expense Tracker</h1>
+            <p id="app-subtitle">Track your income and expenses</p>
         </header>
 
         <section class="balance-card">
-            <h2>Current Balance</h2>
+            <h2 id="balance-title">Current Balance</h2>
             <div id="balance">$0.00</div>
         </section>
 
         <section class="summary">
             <div class="summary-box income">
-                <h3>Income</h3>
+                <h3 id="income-title">Income</h3>
                 <p id="income">$0.00</p>
             </div>
 
             <div class="summary-box expense">
-                <h3>Expenses</h3>
+                <h3 id="expense-title">Expenses</h3>
                 <p id="expenses">$0.00</p>
             </div>
         </section>
 
         <section class="form-section">
-            <h2>Add Transaction</h2>
+            <h2 id="add-title">Add Transaction</h2>
 
             <form id="transaction-form">
 
                 <div class="form-group">
-                    <label for="description">Description</label>
+                    <label for="description" id="description-label">
+                        Description
+                    </label>
+
                     <input
                         type="text"
                         id="description"
@@ -49,31 +60,45 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="amount">Amount</label>
+                    <label for="amount" id="amount-label">
+                        Amount
+                    </label>
+
                     <input
                         type="number"
                         id="amount"
                         placeholder="Enter amount"
                         step="0.01"
+                        min="0"
                         required
                     >
                 </div>
 
                 <div class="form-group">
-                    <label for="type">Type</label>
+                    <label for="type" id="type-label">
+                        Type
+                    </label>
+
                     <select id="type">
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
+                        <option value="income" id="income-option">
+                            Income
+                        </option>
+
+                        <option value="expense" id="expense-option">
+                            Expense
+                        </option>
                     </select>
                 </div>
 
-                <button type="submit">Add Transaction</button>
+                <button type="submit" id="add-button">
+                    Add Transaction
+                </button>
 
             </form>
         </section>
 
         <section class="transactions-section">
-            <h2>Transactions</h2>
+            <h2 id="transactions-title">Transactions</h2>
 
             <ul id="transaction-list">
                 <!-- Transactions will appear here -->
