@@ -275,9 +275,17 @@ function updateChart(income, expenses) {
             }]
         },
 
-        options: {
-            responsive: true
+      options: {
+    responsive: true,
+
+    plugins: {
+        legend: {
+            labels: {
+                color: darkMode ? "#ffffff" : "#333333"
+            }
         }
+    }
+}
     });
 }
 
