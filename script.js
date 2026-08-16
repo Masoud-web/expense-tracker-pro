@@ -238,11 +238,12 @@ form.addEventListener("submit", function (event) {
     }
 
     const transaction = {
-        id: Date.now(),
-        description: description,
-        amount: amount,
-        type: type
-    };
+    id: Date.now(),
+    description: description,
+    amount: amount,
+    type: type,
+    date: dateInput.value
+};
 
     transactions.push(transaction);
 
@@ -371,10 +372,11 @@ if (
                 : translations[currentLanguage].expenseType;
 
        li.innerHTML = `
-    <div class="transaction-info">
-        <h3>${transaction.description}</h3>
-        <span>${typeText}</span>
-    </div>
+<div class="transaction-info">
+    <h3>${transaction.description}</h3>
+    <span>${typeText}</span>
+    <small>${transaction.date || ""}</small>
+</div>
 
     <div class="transaction-amount">
         ${sign}$${transaction.amount.toFixed(2)}
