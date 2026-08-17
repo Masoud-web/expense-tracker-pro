@@ -343,10 +343,15 @@ function updateUI() {
     let income = 0;
     let expenses = 0;
 
-    transactionList.innerHTML = "";
+   transactionList.innerHTML = "";
 
-    transactions.forEach(function (transaction) {
+const sortedTransactions = [...transactions].sort(function (a, b) {
+    return String(b.date || "").localeCompare(
+        String(a.date || "")
+    );
+});
 
+sortedTransactions.forEach(function (transaction) {
     if (transaction.type === "income") {
         income += transaction.amount;
     } else {
