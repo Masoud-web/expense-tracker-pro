@@ -30,6 +30,7 @@ const translations = {
         amount: "Amount",
         amountPlaceholder: "Enter amount",
         type: "Type",
+date: "Date",
         incomeOption: "Income",
         expenseOption: "Expense",
         transactions: "Transactions",
@@ -58,6 +59,7 @@ filterExpense: "Expenses"
         amount: "Betrag",
         amountPlaceholder: "Betrag eingeben",
         type: "Art",
+date: "Datum",
         incomeOption: "Einnahme",
         expenseOption: "Ausgabe",
         transactions: "Transaktionen",
@@ -105,6 +107,14 @@ transactionList.addEventListener("click", function (event) {
         if (newAmount === null) {
             return;
         }
+const newDate = prompt(
+    translations[currentLanguage].date,
+    transaction.date
+);
+
+if (newDate === null) {
+    return;
+}
 
         const amount = Number(newAmount);
 
@@ -114,8 +124,8 @@ transactionList.addEventListener("click", function (event) {
         }
 
         transaction.description = newDescription.trim();
-        transaction.amount = amount;
-
+transaction.amount = amount;
+transaction.date = newDate;
         saveTransactions();
         updateUI();
     }
