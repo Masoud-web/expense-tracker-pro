@@ -2,7 +2,7 @@ const form = document.getElementById("transaction-form");
 const descriptionInput = document.getElementById("description");
 const amountInput = document.getElementById("amount");
 const typeInput = document.getElementById("type");
-
+const dateInput = document.getElementById("date");
 const balanceElement = document.getElementById("balance");
 const incomeElement = document.getElementById("income");
 const expensesElement = document.getElementById("expenses");
@@ -30,6 +30,7 @@ const translations = {
         amount: "Amount",
         amountPlaceholder: "Enter amount",
         type: "Type",
+date: "Date",
         incomeOption: "Income",
         expenseOption: "Expense",
         transactions: "Transactions",
@@ -58,6 +59,7 @@ filterExpense: "Expenses"
         amount: "Betrag",
         amountPlaceholder: "Betrag eingeben",
         type: "Art",
+date: "Datum",
         incomeOption: "Einnahme",
         expenseOption: "Ausgabe",
         transactions: "Transaktionen",
@@ -105,6 +107,14 @@ transactionList.addEventListener("click", function (event) {
         if (newAmount === null) {
             return;
         }
+const newDate = prompt(
+    translations[currentLanguage].date,
+    transaction.date
+);
+
+if (newDate === null) {
+    return;
+}
 
         const amount = Number(newAmount);
 
@@ -114,8 +124,8 @@ transactionList.addEventListener("click", function (event) {
         }
 
         transaction.description = newDescription.trim();
-        transaction.amount = amount;
-
+transaction.amount = amount;
+transaction.date = newDate;
         saveTransactions();
         updateUI();
     }
@@ -238,11 +248,12 @@ form.addEventListener("submit", function (event) {
     }
 
     const transaction = {
-        id: Date.now(),
-        description: description,
-        amount: amount,
-        type: type
-    };
+    id: Date.now(),
+    description: description,
+    amount: amount,
+    type: type,
+    date: dateInput.value
+};
 
     transactions.push(transaction);
 
@@ -332,10 +343,15 @@ function updateUI() {
     let income = 0;
     let expenses = 0;
 
-    transactionList.innerHTML = "";
+   transactionList.innerHTML = "";
 
-    transactions.forEach(function (transaction) {
+const sortedTransactions = [...transactions].sort(function (a, b) {
+    return String(b.date || "").localeCompare(
+        String(a.date || "")
+    );
+});
 
+sortedTransactions.forEach(function (transaction) {
     if (transaction.type === "income") {
         income += transaction.amount;
     } else {
@@ -371,10 +387,11 @@ if (
                 : translations[currentLanguage].expenseType;
 
        li.innerHTML = `
-    <div class="transaction-info">
-        <h3>${transaction.description}</h3>
-        <span>${typeText}</span>
-    </div>
+<div class="transaction-info">
+    <h3>${transaction.description}</h3>
+    <span>${typeText}</span>
+    <small>${transaction.date || ""}</small>
+</div>
 
     <div class="transaction-amount">
         ${sign}$${transaction.amount.toFixed(2)}
