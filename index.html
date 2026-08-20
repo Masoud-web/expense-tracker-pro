@@ -18,11 +18,12 @@
                 <option value="de">Deutsch</option>
             </select>
         </div>
-<div class="theme-switcher">
-    <button id="theme-toggle" type="button">
-        🌙 Dark Mode
-    </button>
-</div>
+
+        <div class="theme-switcher">
+            <button id="theme-toggle" type="button">
+                🌙 Dark Mode
+            </button>
+        </div>
 
         <header>
             <h1 id="app-title">Expense Tracker</h1>
@@ -31,13 +32,15 @@
 
         <section class="balance-card">
             <h2 id="balance-title">Current Balance</h2>
-<div class="search-box">
-    <input
-        type="text"
-        id="search-input"
-        placeholder="Search transactions..."
-    >
-</div>
+
+            <div class="search-box">
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search transactions..."
+                >
+            </div>
+
             <div id="balance">$0.00</div>
         </section>
 
@@ -52,13 +55,49 @@
                 <p id="expenses">$0.00</p>
             </div>
         </section>
-<section class="chart-section">
-    <h2 id="chart-title">Income & Expenses</h2>
 
-    <div class="chart-container">
-        <canvas id="expense-chart"></canvas>
-    </div>
-</section>
+        <section class="monthly-report">
+            <h2 id="monthly-report-title">Monthly Report</h2>
+
+            <div class="month-selector">
+                <label for="report-month" id="report-month-label">
+                    Select Month
+                </label>
+
+                <input
+                    type="month"
+                    id="report-month"
+                >
+            </div>
+
+            <div class="monthly-summary">
+
+                <div class="monthly-box">
+                    <h3 id="monthly-income-title">Income</h3>
+                    <p id="monthly-income">$0.00</p>
+                </div>
+
+                <div class="monthly-box">
+                    <h3 id="monthly-expense-title">Expenses</h3>
+                    <p id="monthly-expenses">$0.00</p>
+                </div>
+
+                <div class="monthly-box">
+                    <h3 id="monthly-balance-title">Balance</h3>
+                    <p id="monthly-balance">$0.00</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="chart-section">
+            <h2 id="chart-title">Income & Expenses</h2>
+
+            <div class="chart-container">
+                <canvas id="expense-chart"></canvas>
+            </div>
+        </section>
+
         <section class="form-section">
             <h2 id="add-title">Add Transaction</h2>
 
@@ -107,17 +146,19 @@
                         </option>
                     </select>
                 </div>
-<div class="form-group">
-    <label for="date" id="date-label">
-        Date
-    </label>
 
-    <input
-        type="date"
-        id="date"
-        required
-    >
-</div>
+                <div class="form-group">
+                    <label for="date" id="date-label">
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="date"
+                        required
+                    >
+                </div>
+
                 <button type="submit" id="add-button">
                     Add Transaction
                 </button>
@@ -127,31 +168,47 @@
 
         <section class="transactions-section">
             <h2 id="transactions-title">Transactions</h2>
-<div class="transaction-filters">
-    <button type="button" class="filter-btn active" data-filter="all">
-        All
-    </button>
 
-    <button type="button" class="filter-btn" data-filter="income">
-        Income
-    </button>
+            <div class="transaction-filters">
+                <button
+                    type="button"
+                    class="filter-btn active"
+                    data-filter="all"
+                >
+                    All
+                </button>
 
-    <button type="button" class="filter-btn" data-filter="expense">
-        Expenses
-    </button>
-</div>
-<div class="export-section">
-    <button type="button" id="export-csv">
-        Export CSV
-    </button>
-</div>
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="income"
+                >
+                    Income
+                </button>
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-filter="expense"
+                >
+                    Expenses
+                </button>
+            </div>
+
+            <div class="export-section">
+                <button type="button" id="export-csv">
+                    Export CSV
+                </button>
+            </div>
+
             <ul id="transaction-list">
                 <!-- Transactions will appear here -->
             </ul>
         </section>
 
     </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 
 </body>
