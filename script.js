@@ -423,6 +423,40 @@ if (
         `$${expenses.toFixed(2)}`;
 updateChart(income, expenses);
 }
+const exportButton = document.getElementById("export-csv");
+
+exportButton.addEventListener("click", function () {
+    if (transactions.length === 0) {
+        alert("No transactions to export");
+        return;
+    }
+
+    let csvContent = "Date,Description,Type,Amount\n";
+
+    transactions.forEach(function (transaction) {
+        csvContent +=
+            `${transaction.date || ""},` +
+            `"${transaction.description}",` +
+            `${transaction.type},` +
+            `${transaction.amount}\n`;
+    });
+
+    const blob = new Blob(
+        [csvContent],
+        { type: "text/csv;charset=utf-8;" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "transactions.csv");
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+});
 
 updateLanguage();
 updateUI();
