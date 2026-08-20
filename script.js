@@ -461,3 +461,49 @@ exportButton.addEventListener("click", function () {
 updateLanguage();
 updateUI();
 applyTheme();
+const reportMonthInput = document.getElementById("report-month");
+const monthlyIncomeElement = document.getElementById("monthly-income");
+const monthlyExpensesElement = document.getElementById("monthly-expenses");
+const monthlyBalanceElement = document.getElementById("monthly-balance");
+
+function updateMonthlyReport() {
+    const selectedMonth = reportMonthInput.value;
+
+    let monthlyIncome = 0;
+    let monthlyExpenses = 0;
+
+    if (selectedMonth) {
+        transactions.forEach(function (transaction) {
+
+            if (!transaction.date) {
+                return;
+            }
+
+            if (transaction.date.substring(0, 7) !== selectedMonth) {
+                return;
+            }
+
+            if (transaction.type === "income") {
+                monthlyIncome += Number(transaction.amount);
+            } else if (transaction.type === "expense") {
+                monthlyExpenses += Number(transaction.amount);
+            }
+        });
+    }
+
+    const monthlyBalance =
+        monthlyIncome - monthlyExpenses;
+
+    monthlyIncomeElement.textContent =
+        `$${monthlyIncome.toFixed(2)}`;
+
+    monthlyExpensesElement.textContent =
+        `$${monthlyExpenses.toFixed(2)}`;
+
+    monthlyBalanceElement.textContent =
+        `$${monthlyBalance.toFixed(2)}`;
+}
+
+reportMonthInput.addEventListener("change", function () {
+    updateMonthlyReport();
+});
