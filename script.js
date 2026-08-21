@@ -12,11 +12,15 @@ const themeToggle = document.getElementById("theme-toggle");
 const filterButtons =
     document.querySelectorAll(".filter-btn");
 const searchInput = document.getElementById("search-input");
+const filterFromDateInput = document.getElementById("filter-from-date");
+const filterToDateInput = document.getElementById("filter-to-date");
 let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
 let currentFilter = "all";
 let searchText = "";
 let selectedReportMonth = "";
+let filterFromDate = "";
+let filterToDate = "";
 const translations = {
     en: {
         language: "Language:",
@@ -296,6 +300,20 @@ filterButtons.forEach(function (button) {
     });
 
 });
+filterFromDateInput.addEventListener("change", function () {
+
+    filterFromDate = filterFromDateInput.value;
+
+    updateUI();
+});
+
+filterToDateInput.addEventListener("change", function () {
+
+    filterToDate = filterToDateInput.value;
+
+    updateUI();
+});
+
 searchInput.addEventListener("input", function () {
 
     searchText = searchInput.value.toLowerCase();
@@ -383,6 +401,21 @@ if (
 ) {
     return;
 }
+
+
+        if (
+            filterFromDate &&
+            (!transaction.date || transaction.date < filterFromDate)
+        ) {
+            return;
+        }
+
+        if (
+            filterToDate &&
+            (!transaction.date || transaction.date > filterToDate)
+        ) {
+            return;
+        }
 
         const li = document.createElement("li");
 
