@@ -16,6 +16,7 @@ let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
 let currentFilter = "all";
 let searchText = "";
+let selectedReportMonth = "";
 const translations = {
     en: {
         language: "Language:",
@@ -374,6 +375,15 @@ if (
     return;
 }
 
+
+if (
+    selectedReportMonth &&
+    (!transaction.date ||
+     transaction.date.substring(0, 7) !== selectedReportMonth)
+) {
+    return;
+}
+
         const li = document.createElement("li");
 
         li.className =
@@ -468,6 +478,7 @@ const monthlyBalanceElement = document.getElementById("monthly-balance");
 
 function updateMonthlyReport() {
     const selectedMonth = reportMonthInput.value;
+    selectedReportMonth = selectedMonth;
 
     let monthlyIncome = 0;
     let monthlyExpenses = 0;
@@ -508,6 +519,7 @@ function updateMonthlyReport() {
     }
 
     updateChart(monthlyIncome, monthlyExpenses);
+    updateUI();
 }
 
 reportMonthInput.addEventListener("change", function () {
