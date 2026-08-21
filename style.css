@@ -264,3 +264,20 @@ body.dark-mode #language-select {
 #theme-toggle:hover {
     transform: translateY(-1px);
 }
+.chart-container {
+    width: 100%;
+    max-width: 700px;
+    height: 400px;
+    margin: 30px auto;
+    position: relative;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-section {
+    margin-top: 40px;
+}
+

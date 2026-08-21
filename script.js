@@ -327,6 +327,7 @@ function updateChart(income, expenses) {
 
       options: {
     responsive: true,
+            maintainAspectRatio: false,
 
     plugins: {
         legend: {
@@ -421,7 +422,6 @@ if (
 
     expensesElement.textContent =
         `$${expenses.toFixed(2)}`;
-updateChart(income, expenses);
 }
 const exportButton = document.getElementById("export-csv");
 
@@ -502,6 +502,12 @@ function updateMonthlyReport() {
 
     monthlyBalanceElement.textContent =
         `$${monthlyBalance.toFixed(2)}`;
+
+    if (expenseChart) {
+        expenseChart.destroy();
+    }
+
+    updateChart(monthlyIncome, monthlyExpenses);
 }
 
 reportMonthInput.addEventListener("change", function () {
