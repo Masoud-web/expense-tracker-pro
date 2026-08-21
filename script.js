@@ -14,6 +14,7 @@ const filterButtons =
 const searchInput = document.getElementById("search-input");
 const filterFromDateInput = document.getElementById("filter-from-date");
 const filterToDateInput = document.getElementById("filter-to-date");
+const sortSelect = document.getElementById("sort-select");
 let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
 let currentFilter = "all";
@@ -21,6 +22,7 @@ let searchText = "";
 let selectedReportMonth = "";
 let filterFromDate = "";
 let filterToDate = "";
+let currentSort = "date-desc";
 const translations = {
     en: {
         language: "Language:",
@@ -314,6 +316,13 @@ filterToDateInput.addEventListener("change", function () {
     updateUI();
 });
 
+sortSelect.addEventListener("change", function () {
+
+    currentSort = sortSelect.value;
+
+    updateUI();
+});
+
 searchInput.addEventListener("input", function () {
 
     searchText = searchInput.value.toLowerCase();
@@ -366,6 +375,21 @@ function updateUI() {
    transactionList.innerHTML = "";
 
 const sortedTransactions = [...transactions].sort(function (a, b) {
+
+    if (currentSort === "date-asc") {
+        return String(a.date || "").localeCompare(
+            String(b.date || "")
+        );
+    }
+
+    if (currentSort === "amount-desc") {
+        return Number(b.amount) - Number(a.amount);
+    }
+
+    if (currentSort === "amount-asc") {
+        return Number(a.amount) - Number(b.amount);
+    }
+
     return String(b.date || "").localeCompare(
         String(a.date || "")
     );
