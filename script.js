@@ -489,6 +489,7 @@ if (
 
     expensesElement.textContent =
         `$${expenses.toFixed(2)}`;
+    updateChart(income, expenses);
 }
 const exportButton = document.getElementById("export-csv");
 
@@ -525,9 +526,6 @@ exportButton.addEventListener("click", function () {
     document.body.removeChild(link);
 });
 
-updateLanguage();
-updateUI();
-applyTheme();
 const reportMonthInput = document.getElementById("report-month");
 const monthlyIncomeElement = document.getElementById("monthly-income");
 const monthlyExpensesElement = document.getElementById("monthly-expenses");
@@ -582,3 +580,7 @@ function updateMonthlyReport() {
 reportMonthInput.addEventListener("change", function () {
     updateMonthlyReport();
 });
+
+updateLanguage();
+applyTheme();
+updateUI();
