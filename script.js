@@ -135,6 +135,7 @@ transaction.amount = amount;
 transaction.date = newDate;
         saveTransactions();
         updateUI();
+        updateMonthlyBudget();
     }
 });
 transactionList.addEventListener("click", function (event) {
@@ -266,6 +267,7 @@ form.addEventListener("submit", function (event) {
 
     saveTransactions();
     updateUI();
+    updateMonthlyBudget();
 
     form.reset();
 });
@@ -581,6 +583,114 @@ reportMonthInput.addEventListener("change", function () {
     updateMonthlyReport();
 });
 
+const monthlyBudgetInput = document.getElementById("monthly-budget-input");
+const budgetSpentElement = document.getElementById("budget-spent");
+const budgetRemainingElement = document.getElementById("budget-remaining");
+const budgetProgressElement = document.getElementById("budget-progress");
+const budgetPercentageElement = document.getElementById("budget-percentage");
+const budgetMessageElement = document.getElementById("budget-message");
+
+function getMonthlyBudget(month) {
+    if (!month) {
+        return 0;
+    }
+
+    const budgets = JSON.parse(
+        localStorage.getItem("expenseTrackerMonthlyBudgets")
+    ) || {};
+
+    return Number(budgets[month]) || 0;
+}
+
+function saveMonthlyBudget(month, amount) {
+    if (!month) {
+        return;
+    }
+
+    const budgets = JSON.parse(
+        localStorage.getItem("expenseTrackerMonthlyBudgets")
+    ) || {};
+
+    budgets[month] = amount;
+
+    localStorage.setItem(
+        "expenseTrackerMonthlyBudgets",
+        JSON.stringify(budgets)
+    );
+}
+
+function updateMonthlyBudget() {
+    const selectedMonth = reportMonthInput.value;
+    const budget = getMonthlyBudget(selectedMonth);
+
+    let spent = 0;
+
+    if (selectedMonth) {
+        transactions.forEach(function (transaction) {
+            if (!transaction.date) {
+                return;
+            }
+
+            if (transaction.date.substring(0, 7) !== selectedMonth) {
+                return;
+            }
+
+            if (transaction.type === "expense") {
+                spent += Number(transaction.amount);
+            }
+        });
+    }
+
+    const remaining = budget - spent;
+
+    budgetSpentElement.textContent =
+        `$${spent.toFixed(2)}`;
+
+    budgetRemainingElement.textContent =
+        `$${remaining.toFixed(2)}`;
+
+    if (budget <= 0) {
+        budgetProgressElement.style.width = "0%";
+        budgetPercentageElement.textContent = "0%";
+        budgetMessageElement.textContent = "Set a budget for this month.";
+        return;
+    }
+
+    const percentage = Math.min((spent / budget) * 100, 100);
+
+    budgetProgressElement.style.width = `${percentage}%`;
+    budgetPercentageElement.textContent =
+        `${Math.round((spent / budget) * 100)}%`;
+
+    if (spent > budget) {
+        budgetMessageElement.textContent =
+            "Budget exceeded.";
+    } else if (spent === budget) {
+        budgetMessageElement.textContent =
+            "Budget fully used.";
+    } else {
+        budgetMessageElement.textContent =
+            "You are within your budget.";
+    }
+}
+
+monthlyBudgetInput.addEventListener("change", function () {
+    const selectedMonth = reportMonthInput.value;
+    const amount = Number(monthlyBudgetInput.value) || 0;
+
+    saveMonthlyBudget(selectedMonth, amount);
+    updateMonthlyBudget();
+});
+
+const originalUpdateMonthlyReport = updateMonthlyReport;
+updateMonthlyReport = function () {
+    originalUpdateMonthlyReport();
+    updateMonthlyBudget();
+};
+
+
 updateLanguage();
 applyTheme();
+updateUI();
+updateMonthlyBudget();
 updateUI();
