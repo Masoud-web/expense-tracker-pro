@@ -187,6 +187,22 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="category" id="category-label">
+                        Category
+                    </label>
+
+                    <select id="category">
+                        <option value="food">Food</option>
+                        <option value="transport">Transport</option>
+                        <option value="bills">Bills</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="health">Health</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="date" id="date-label">
                         Date
                     </label>
@@ -257,6 +273,18 @@
                 </button>
             </div>
 
+                <label for="category-filter">Category:</label>
+                <select id="category-filter">
+                    <option value="all">All Categories</option>
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="bills">Bills</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="health">Health</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="other">Other</option>
+                </select>
+
             <div class="sort-section">
                 <label for="sort-select">
                     Sort:
@@ -294,7 +322,50 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <div id="edit-modal" class="edit-modal hidden">
+        <div class="edit-modal-content">
+
+            <h2 id="edit-modal-title">Edit Transaction</h2>
+
+            <div class="form-group">
+                <label for="edit-description">Description</label>
+                <input type="text" id="edit-description">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-amount">Amount</label>
+                <input type="number" id="edit-amount" min="0" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-category">Category</label>
+                <select id="edit-category">
+                    <option value="food">Food</option>
+                    <option value="transport">Transport</option>
+                    <option value="bills">Bills</option>
+                    <option value="shopping">Shopping</option>
+                    <option value="health">Health</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-date">Date</label>
+                <input type="date" id="edit-date">
+            </div>
+
+            <div class="edit-modal-actions">
+                <button type="button" id="edit-save-button">Save</button>
+                <button type="button" id="edit-cancel-button">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+
     <script src="script.js"></script>
+
+
 
 </body>
 </html>

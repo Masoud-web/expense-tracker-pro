@@ -2,16 +2,26 @@ const form = document.getElementById("transaction-form");
 const descriptionInput = document.getElementById("description");
 const amountInput = document.getElementById("amount");
 const typeInput = document.getElementById("type");
+const categoryInput = document.getElementById("category");
 const dateInput = document.getElementById("date");
 const balanceElement = document.getElementById("balance");
 const incomeElement = document.getElementById("income");
 const expensesElement = document.getElementById("expenses");
 const transactionList = document.getElementById("transaction-list");
+const editModal = document.getElementById("edit-modal");
+const editDescriptionInput = document.getElementById("edit-description");
+const editAmountInput = document.getElementById("edit-amount");
+const editCategoryInput = document.getElementById("edit-category");
+const editDateInput = document.getElementById("edit-date");
+const editSaveButton = document.getElementById("edit-save-button");
+const editCancelButton = document.getElementById("edit-cancel-button");
+let editingTransactionId = null;
 const languageSelect = document.getElementById("language-select");
 const themeToggle = document.getElementById("theme-toggle");
 const filterButtons =
     document.querySelectorAll(".filter-btn");
 const searchInput = document.getElementById("search-input");
+const categoryFilter = document.getElementById("category-filter");
 const filterFromDateInput = document.getElementById("filter-from-date");
 const filterToDateInput = document.getElementById("filter-to-date");
 const sortSelect = document.getElementById("sort-select");
@@ -19,6 +29,7 @@ let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
 let currentFilter = "all";
 let searchText = "";
+let currentCategory = "all";
 let selectedReportMonth = "";
 let filterFromDate = "";
 let filterToDate = "";
@@ -86,57 +97,29 @@ filterExpense: "Ausgaben"
 transactionList.addEventListener("click", function (event) {
     const editButton = event.target.closest(".edit-btn");
 
-    if (editButton) {
-        const id = Number(editButton.dataset.id);
-
-        const transaction = transactions.find(function (transaction) {
-            return transaction.id === id;
-        });
-
-        if (!transaction) {
-            return;
-        }
-
-        const newDescription = prompt(
-            translations[currentLanguage].description,
-            transaction.description
-        );
-
-        if (newDescription === null) {
-            return;
-        }
-
-        const newAmount = prompt(
-            translations[currentLanguage].amount,
-            transaction.amount
-        );
-
-        if (newAmount === null) {
-            return;
-        }
-const newDate = prompt(
-    translations[currentLanguage].date,
-    transaction.date
-);
-
-if (newDate === null) {
-    return;
-}
-
-        const amount = Number(newAmount);
-
-        if (!newDescription.trim() || amount <= 0) {
-            alert(translations[currentLanguage].invalid);
-            return;
-        }
-
-        transaction.description = newDescription.trim();
-transaction.amount = amount;
-transaction.date = newDate;
-        saveTransactions();
-        updateUI();
-        updateMonthlyBudget();
+    if (!editButton) {
+        return;
     }
+
+    const id = Number(editButton.dataset.id);
+
+    const transaction = transactions.find(function (transaction) {
+        return transaction.id === id;
+    });
+
+    if (!transaction) {
+        return;
+    }
+
+    editingTransactionId = id;
+
+    editDescriptionInput.value = transaction.description;
+    editAmountInput.value = transaction.amount;
+    editCategoryInput.value = transaction.category || "other";
+    editDateInput.value = transaction.date || "";
+
+    editModal.classList.remove("hidden");
+    editDescriptionInput.focus();
 });
 transactionList.addEventListener("click", function (event) {
     const deleteButton = event.target.closest(".delete-btn");
@@ -153,6 +136,47 @@ transactionList.addEventListener("click", function (event) {
 
     saveTransactions();
     updateUI();
+});
+editSaveButton.addEventListener("click", function () {
+    if (editingTransactionId === null) {
+        return;
+    }
+
+    const transaction = transactions.find(function (transaction) {
+        return transaction.id === editingTransactionId;
+    });
+
+    if (!transaction) {
+        return;
+    }
+
+    const description = editDescriptionInput.value.trim();
+    const amount = Number(editAmountInput.value);
+    const category = editCategoryInput.value;
+    const date = editDateInput.value;
+
+    if (!description || amount <= 0 || !date) {
+        alert(translations[currentLanguage].invalid);
+        return;
+    }
+
+    transaction.description = description;
+    transaction.amount = amount;
+    transaction.category = category;
+    transaction.date = date;
+
+    saveTransactions();
+
+    editingTransactionId = null;
+    editModal.classList.add("hidden");
+
+    updateUI();
+    updateMonthlyBudget();
+});
+
+editCancelButton.addEventListener("click", function () {
+    editingTransactionId = null;
+    editModal.classList.add("hidden");
 });
 let currentLanguage =
     localStorage.getItem("expenseTrackerLanguage") || "en";
@@ -260,6 +284,7 @@ form.addEventListener("submit", function (event) {
     description: description,
     amount: amount,
     type: type,
+    category: categoryInput.value,
     date: dateInput.value
 };
 
@@ -331,6 +356,11 @@ searchInput.addEventListener("input", function () {
 
     updateUI();
 
+});
+
+categoryFilter.addEventListener("change", function () {
+    currentCategory = categoryFilter.value;
+    updateUI();
 });
 let expenseChart;
 
@@ -410,6 +440,13 @@ sortedTransactions.forEach(function (transaction) {
     ) {
         return;
     }
+    if (
+        currentCategory !== "all" &&
+        transaction.category !== currentCategory
+    ) {
+        return;
+    }
+
 if (
     searchText &&
     !transaction.description
@@ -460,6 +497,7 @@ if (
 <div class="transaction-info">
     <h3>${transaction.description}</h3>
     <span>${typeText}</span>
+    <span>Category: ${transaction.category || "other"}</span>
     <small>${transaction.date || ""}</small>
 </div>
 
