@@ -21,6 +21,7 @@ const themeToggle = document.getElementById("theme-toggle");
 const filterButtons =
     document.querySelectorAll(".filter-btn");
 const searchInput = document.getElementById("search-input");
+const categoryFilter = document.getElementById("category-filter");
 const filterFromDateInput = document.getElementById("filter-from-date");
 const filterToDateInput = document.getElementById("filter-to-date");
 const sortSelect = document.getElementById("sort-select");
@@ -28,6 +29,7 @@ let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
 let currentFilter = "all";
 let searchText = "";
+let currentCategory = "all";
 let selectedReportMonth = "";
 let filterFromDate = "";
 let filterToDate = "";
@@ -355,6 +357,11 @@ searchInput.addEventListener("input", function () {
     updateUI();
 
 });
+
+categoryFilter.addEventListener("change", function () {
+    currentCategory = categoryFilter.value;
+    updateUI();
+});
 let expenseChart;
 
 function updateChart(income, expenses) {
@@ -433,6 +440,13 @@ sortedTransactions.forEach(function (transaction) {
     ) {
         return;
     }
+    if (
+        currentCategory !== "all" &&
+        transaction.category !== currentCategory
+    ) {
+        return;
+    }
+
 if (
     searchText &&
     !transaction.description
