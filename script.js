@@ -651,26 +651,27 @@ function updateMonthlyBudget() {
 
     if (budget <= 0) {
         budgetProgressElement.style.width = "0%";
+        budgetProgressElement.style.background = "#159447";
         budgetPercentageElement.textContent = "0%";
         budgetMessageElement.textContent = "Set a budget for this month.";
         return;
     }
 
-    const percentage = Math.min((spent / budget) * 100, 100);
+    const percentage = (spent / budget) * 100;
+    const displayPercentage = Math.round(percentage);
 
-    budgetProgressElement.style.width = `${percentage}%`;
-    budgetPercentageElement.textContent =
-        `${Math.round((spent / budget) * 100)}%`;
+    budgetProgressElement.style.width = `${Math.min(percentage, 100)}%`;
+    budgetPercentageElement.textContent = `${displayPercentage}%`;
 
-    if (spent > budget) {
-        budgetMessageElement.textContent =
-            "Budget exceeded.";
-    } else if (spent === budget) {
-        budgetMessageElement.textContent =
-            "Budget fully used.";
+    if (percentage >= 100) {
+        budgetProgressElement.style.background = "#d93636";
+        budgetMessageElement.textContent = "Budget exceeded.";
+    } else if (percentage >= 80) {
+        budgetProgressElement.style.background = "#f39c12";
+        budgetMessageElement.textContent = "Warning: You are close to your budget.";
     } else {
-        budgetMessageElement.textContent =
-            "You are within your budget.";
+        budgetProgressElement.style.background = "#159447";
+        budgetMessageElement.textContent = "You are within your budget.";
     }
 }
 
