@@ -27,6 +27,18 @@ const filterToDateInput = document.getElementById("filter-to-date");
 const sortSelect = document.getElementById("sort-select");
 let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
+    transactions = transactions.map(function (transaction) {
+    if (!transaction.category) {
+        transaction.category = "other";
+    }
+
+    return transaction;
+});
+
+localStorage.setItem(
+    "expenseTrackerTransactions",
+    JSON.stringify(transactions)
+);
 let currentFilter = "all";
 let searchText = "";
 let currentCategory = "all";
