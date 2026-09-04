@@ -1,4 +1,4 @@
-const form = document.getElementById("transaction-form");
+﻿const form = document.getElementById("transaction-form");
 const descriptionInput = document.getElementById("description");
 const amountInput = document.getElementById("amount");
 const typeInput = document.getElementById("type");
@@ -22,6 +22,14 @@ const filterButtons =
     document.querySelectorAll(".filter-btn");
 const searchInput = document.getElementById("search-input");
 const categoryFilter = document.getElementById("category-filter");
+const categoryFood = document.getElementById("category-food");
+const categoryTransport = document.getElementById("category-transport");
+const categoryBills = document.getElementById("category-bills");
+const categoryShopping = document.getElementById("category-shopping");
+const categoryHealth = document.getElementById("category-health");
+const categoryEntertainment = document.getElementById("category-entertainment");
+const categoryOther = document.getElementById("category-other");
+
 const filterFromDateInput = document.getElementById("filter-from-date");
 const filterToDateInput = document.getElementById("filter-to-date");
 const sortSelect = document.getElementById("sort-select");
@@ -67,10 +75,10 @@ date: "Date",
         incomeType: "Income",
         expenseType: "Expense",
         invalid: "Please enter a valid description and amount.",
-        darkMode: "🌙 Dark Mode",
-lightMode: "☀️ Light Mode",
-edit: "✏️ Edit",
-delete: "🗑️ Delete",
+        darkMode: "ðŸŒ™ Dark Mode",
+lightMode: "â˜€ï¸ Light Mode",
+edit: "âœï¸ Edit",
+delete: "ðŸ—‘ï¸ Delete",
 filterAll: "All",
 filterIncome: "Income",
 filterExpense: "Expenses"
@@ -83,7 +91,7 @@ filterExpense: "Expenses"
         balance: "Aktueller Kontostand",
         income: "Einnahmen",
         expenses: "Ausgaben",
-        addTransaction: "Transaktion hinzufügen",
+        addTransaction: "Transaktion hinzufÃ¼gen",
         description: "Beschreibung",
         descriptionPlaceholder: "z. B. Gehalt, Essen, Einkaufen",
         amount: "Betrag",
@@ -95,11 +103,11 @@ date: "Datum",
         transactions: "Transaktionen",
         incomeType: "Einnahme",
         expenseType: "Ausgabe",
-        invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
-        darkMode: "🌙 Dunkelmodus",
-lightMode: "☀️ Hellmodus",
-edit: "✏️ Bearbeiten",
-delete: "🗑️ Löschen",
+        invalid: "Bitte geben Sie eine gÃ¼ltige Beschreibung und einen gÃ¼ltigen Betrag ein.",
+        darkMode: "ðŸŒ™ Dunkelmodus",
+lightMode: "â˜€ï¸ Hellmodus",
+edit: "âœï¸ Bearbeiten",
+delete: "ðŸ—‘ï¸ LÃ¶schen",
 filterAll: "Alle",
 filterIncome: "Einnahmen",
 filterExpense: "Ausgaben"
@@ -203,6 +211,10 @@ function saveTransactions() {
         "expenseTrackerTransactions",
         JSON.stringify(transactions)
     );
+}
+
+function formatCurrency(value) {
+    return `$${Number(value).toFixed(2)}`;
 }
 
 function updateLanguage() {
@@ -375,6 +387,7 @@ categoryFilter.addEventListener("change", function () {
     updateUI();
 });
 let expenseChart;
+let categoryBarChart;
 
 function updateChart(income, expenses) {
     const ctx = document.getElementById("expense-chart");
@@ -412,6 +425,150 @@ function updateChart(income, expenses) {
     });
 }
 
+function updateCategoryReport() {
+    const categories = {
+        food: { income: 0, expense: 0 },
+        transport: { income: 0, expense: 0 },
+        bills: { income: 0, expense: 0 },
+        shopping: { income: 0, expense: 0 },
+        health: { income: 0, expense: 0 },
+        entertainment: { income: 0, expense: 0 },
+        other: { income: 0, expense: 0 }
+    };
+
+    transactions.forEach(function (transaction) {
+        const category = transaction.category || "other";
+        const amount = Number(transaction.amount);
+
+        if (categories[category] !== undefined) {
+            if (transaction.type === "income") {
+                categories[category].income += amount;
+            }
+
+            if (transaction.type === "expense") {
+                categories[category].expense += amount;
+            }
+        }
+    });
+
+    categoryFood.textContent =
+        formatCurrency(categories.food.expense);
+
+    categoryTransport.textContent =
+        formatCurrency(categories.transport.expense);
+
+    categoryBills.textContent =
+        formatCurrency(categories.bills.expense);
+
+    categoryShopping.textContent =
+        formatCurrency(categories.shopping.expense);
+
+    categoryHealth.textContent =
+        formatCurrency(categories.health.expense);
+
+    categoryEntertainment.textContent =
+        formatCurrency(categories.entertainment.expense);
+
+    categoryOther.textContent =
+        formatCurrency(categories.other.expense);
+
+    const labels = [
+        "Food",
+        "Transport",
+        "Bills",
+        "Shopping",
+        "Health",
+        "Entertainment",
+        "Other"
+    ];
+
+    const incomeData = [
+        categories.food.income,
+        categories.transport.income,
+        categories.bills.income,
+        categories.shopping.income,
+        categories.health.income,
+        categories.entertainment.income,
+        categories.other.income
+    ];
+
+    const expenseData = [
+        -categories.food.expense,
+        -categories.transport.expense,
+        -categories.bills.expense,
+        -categories.shopping.expense,
+        -categories.health.expense,
+        -categories.entertainment.expense,
+        -categories.other.expense
+    ];
+
+    const maxAbsValue = Math.max(
+        ...incomeData.map(Math.abs),
+        ...expenseData.map(Math.abs),
+        1
+    );
+
+    const ctx = document.getElementById("category-bar-chart");
+
+    if (!ctx) {
+        return;
+    }
+
+    if (categoryBarChart) {
+        categoryBarChart.destroy();
+    }
+
+    categoryBarChart = new Chart(ctx, {
+        type: "bar",
+
+        data: {
+            labels: labels,
+
+            datasets: [
+                {
+                    label: "Income",
+                    data: incomeData,
+                    backgroundColor: "rgba(34, 197, 94, 0.75)",
+                    borderColor: "rgb(22, 163, 74)",
+                    borderWidth: 1
+                },
+                {
+                    label: "Expenses",
+                    data: expenseData,
+                    backgroundColor: "rgba(239, 68, 68, 0.75)",
+                    borderColor: "rgb(220, 38, 38)",
+                    borderWidth: 1
+                }
+            ]
+        },
+
+        options: {
+            responsive: true,
+
+            scales: {
+                y: {
+                    min: -maxAbsValue,
+                    max: maxAbsValue,
+                    beginAtZero: true,
+
+                    grid: {
+                        color: function (context) {
+                            if (context.tick.value === 0) {
+                                return "rgba(0, 0, 0, 0.7)";
+                            }
+
+                            return "rgba(0, 0, 0, 0.1)";
+                        },
+
+                        lineWidth: function (context) {
+                            return context.tick.value === 0 ? 2 : 1;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 function updateUI() {
     let income = 0;
     let expenses = 0;
@@ -542,6 +699,7 @@ if (
     expensesElement.textContent =
         `$${expenses.toFixed(2)}`;
     updateChart(income, expenses);
+    updateCategoryReport();
 }
 const exportButton = document.getElementById("export-csv");
 
