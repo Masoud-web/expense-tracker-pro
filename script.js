@@ -22,6 +22,14 @@ const filterButtons =
     document.querySelectorAll(".filter-btn");
 const searchInput = document.getElementById("search-input");
 const categoryFilter = document.getElementById("category-filter");
+const categoryFood = document.getElementById("category-food");
+const categoryTransport = document.getElementById("category-transport");
+const categoryBills = document.getElementById("category-bills");
+const categoryShopping = document.getElementById("category-shopping");
+const categoryHealth = document.getElementById("category-health");
+const categoryEntertainment = document.getElementById("category-entertainment");
+const categoryOther = document.getElementById("category-other");
+
 const filterFromDateInput = document.getElementById("filter-from-date");
 const filterToDateInput = document.getElementById("filter-to-date");
 const sortSelect = document.getElementById("sort-select");
@@ -203,6 +211,10 @@ function saveTransactions() {
         "expenseTrackerTransactions",
         JSON.stringify(transactions)
     );
+}
+
+function formatCurrency(value) {
+    return `$${Number(value).toFixed(2)}`;
 }
 
 function updateLanguage() {
@@ -412,6 +424,36 @@ function updateChart(income, expenses) {
     });
 }
 
+function updateCategoryReport() {
+    const categories = {
+        food: 0,
+        transport: 0,
+        bills: 0,
+        shopping: 0,
+        health: 0,
+        entertainment: 0,
+        other: 0
+    };
+
+    transactions.forEach(function (transaction) {
+        if (transaction.type === "expense") {
+            const category = transaction.category || "other";
+
+            if (categories[category] !== undefined) {
+                categories[category] += Number(transaction.amount);
+            }
+        }
+    });
+
+    categoryFood.textContent = formatCurrency(categories.food);
+    categoryTransport.textContent = formatCurrency(categories.transport);
+    categoryBills.textContent = formatCurrency(categories.bills);
+    categoryShopping.textContent = formatCurrency(categories.shopping);
+    categoryHealth.textContent = formatCurrency(categories.health);
+    categoryEntertainment.textContent = formatCurrency(categories.entertainment);
+    categoryOther.textContent = formatCurrency(categories.other);
+}
+
 function updateUI() {
     let income = 0;
     let expenses = 0;
@@ -542,6 +584,7 @@ if (
     expensesElement.textContent =
         `$${expenses.toFixed(2)}`;
     updateChart(income, expenses);
+    updateCategoryReport();
 }
 const exportButton = document.getElementById("export-csv");
 
