@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -21,7 +21,7 @@
 
         <div class="theme-switcher">
             <button id="theme-toggle" type="button">
-                Ã°Å¸Å’â„¢ Dark Mode
+                🌙 Dark Mode
             </button>
         </div>
 
@@ -169,6 +169,75 @@
             </div>
 
             <p id="budget-message"></p>
+        </section>
+        <section class="financial-reports">
+            <h2 id="financial-reports-title">Financial Reports</h2>
+
+            <div class="report-controls">
+                <div class="form-group">
+                    <label for="report-from-date" id="report-from-date-label">
+                        From
+                    </label>
+
+                    <input
+                        type="date"
+                        id="report-from-date"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="report-to-date" id="report-to-date-label">
+                        To
+                    </label>
+
+                    <input
+                        type="date"
+                        id="report-to-date"
+                    >
+                </div>
+            </div>
+
+            <div class="financial-report-summary">
+
+                <div class="report-box">
+                    <h3 id="report-total-income-title">Total Income</h3>
+                    <p id="report-total-income">$0.00</p>
+                </div>
+
+                <div class="report-box">
+                    <h3 id="report-total-expenses-title">Total Expenses</h3>
+                    <p id="report-total-expenses">$0.00</p>
+                </div>
+
+                <div class="report-box">
+                    <h3 id="report-net-balance-title">Net Balance</h3>
+                    <p id="report-net-balance">$0.00</p>
+                </div>
+
+                <div class="report-box">
+                    <h3 id="report-transaction-count-title">Transactions</h3>
+                    <p id="report-transaction-count">0</p>
+                </div>
+
+            </div>
+
+            <div class="report-highlights">
+
+                <div class="report-highlight">
+                    <h3 id="report-highest-expense-title">
+                        Highest Expense Category
+                    </h3>
+                    <p id="report-highest-expense-category">-</p>
+                </div>
+
+                <div class="report-highlight">
+                    <h3 id="report-average-expense-title">
+                        Average Expense
+                    </h3>
+                    <p id="report-average-expense">$0.00</p>
+                </div>
+
+            </div>
         </section>
         <section class="chart-section">
             <h2 id="chart-title">Income & Expenses</h2>

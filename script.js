@@ -1,4 +1,4 @@
-﻿const form = document.getElementById("transaction-form");
+const form = document.getElementById("transaction-form");
 const descriptionInput = document.getElementById("description");
 const amountInput = document.getElementById("amount");
 const typeInput = document.getElementById("type");
@@ -33,6 +33,23 @@ const categoryOther = document.getElementById("category-other");
 const filterFromDateInput = document.getElementById("filter-from-date");
 const filterToDateInput = document.getElementById("filter-to-date");
 const sortSelect = document.getElementById("sort-select");
+
+const reportFromDateInput =
+    document.getElementById("report-from-date");
+const reportToDateInput =
+    document.getElementById("report-to-date");
+const reportTotalIncomeElement =
+    document.getElementById("report-total-income");
+const reportTotalExpensesElement =
+    document.getElementById("report-total-expenses");
+const reportNetBalanceElement =
+    document.getElementById("report-net-balance");
+const reportTransactionCountElement =
+    document.getElementById("report-transaction-count");
+const reportHighestExpenseCategoryElement =
+    document.getElementById("report-highest-expense-category");
+const reportAverageExpenseElement =
+    document.getElementById("report-average-expense");
 let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
     transactions = transactions.map(function (transaction) {
@@ -62,6 +79,15 @@ const translations = {
         balance: "Current Balance",
         income: "Income",
         expenses: "Expenses",
+        financialReports: "Financial Reports",
+        reportFrom: "From",
+        reportTo: "To",
+        totalIncome: "Total Income",
+        totalExpenses: "Total Expenses",
+        netBalance: "Net Balance",
+        reportTransactions: "Transactions",
+        highestExpenseCategory: "Highest Expense Category",
+        averageExpense: "Average Expense",
         addTransaction: "Add Transaction",
         description: "Description",
         descriptionPlaceholder: "e.g. Salary, Food, Shopping",
@@ -75,10 +101,10 @@ date: "Date",
         incomeType: "Income",
         expenseType: "Expense",
         invalid: "Please enter a valid description and amount.",
-        darkMode: "ðŸŒ™ Dark Mode",
-lightMode: "â˜€ï¸ Light Mode",
-edit: "âœï¸ Edit",
-delete: "ðŸ—‘ï¸ Delete",
+        darkMode: "🌙 Dark Mode",
+lightMode: "☀️ Light Mode",
+edit: "✏️ Edit",
+delete: "🗑️ Delete",
 filterAll: "All",
 filterIncome: "Income",
 filterExpense: "Expenses"
@@ -91,7 +117,16 @@ filterExpense: "Expenses"
         balance: "Aktueller Kontostand",
         income: "Einnahmen",
         expenses: "Ausgaben",
-        addTransaction: "Transaktion hinzufÃ¼gen",
+        financialReports: "Finanzberichte",
+        reportFrom: "Von",
+        reportTo: "Bis",
+        totalIncome: "Gesamteinnahmen",
+        totalExpenses: "Gesamtausgaben",
+        netBalance: "Nettosaldo",
+        reportTransactions: "Transaktionen",
+        highestExpenseCategory: "Kategorie mit den h�chsten Ausgaben",
+        averageExpense: "Durchschnittliche Ausgabe",
+        addTransaction: "Transaktion hinzufügen",
         description: "Beschreibung",
         descriptionPlaceholder: "z. B. Gehalt, Essen, Einkaufen",
         amount: "Betrag",
@@ -103,11 +138,11 @@ date: "Datum",
         transactions: "Transaktionen",
         incomeType: "Einnahme",
         expenseType: "Ausgabe",
-        invalid: "Bitte geben Sie eine gÃ¼ltige Beschreibung und einen gÃ¼ltigen Betrag ein.",
-        darkMode: "ðŸŒ™ Dunkelmodus",
-lightMode: "â˜€ï¸ Hellmodus",
-edit: "âœï¸ Bearbeiten",
-delete: "ðŸ—‘ï¸ LÃ¶schen",
+        invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
+        darkMode: "🌙 Dunkelmodus",
+lightMode: "☀️ Hellmodus",
+edit: "✏️ Bearbeiten",
+delete: "🗑️ Löschen",
 filterAll: "Alle",
 filterIncome: "Einnahmen",
 filterExpense: "Ausgaben"
@@ -270,6 +305,32 @@ document.querySelector('[data-filter="income"]').textContent =
 
 document.querySelector('[data-filter="expense"]').textContent =
     t.filterExpense;
+    document.getElementById("financial-reports-title").textContent =
+    t.financialReports;
+
+document.getElementById("report-from-date-label").textContent =
+    t.reportFrom;
+
+document.getElementById("report-to-date-label").textContent =
+    t.reportTo;
+
+document.getElementById("report-total-income-title").textContent =
+    t.totalIncome;
+
+document.getElementById("report-total-expenses-title").textContent =
+    t.totalExpenses;
+
+document.getElementById("report-net-balance-title").textContent =
+    t.netBalance;
+
+document.getElementById("report-transaction-count-title").textContent =
+    t.reportTransactions;
+
+document.getElementById("report-highest-expense-title").textContent =
+    t.highestExpenseCategory;
+
+document.getElementById("report-average-expense-title").textContent =
+    t.averageExpense;
     updateThemeButton();
 }
 
@@ -356,6 +417,7 @@ filterButtons.forEach(function (button) {
 filterFromDateInput.addEventListener("change", function () {
 
     filterFromDate = filterFromDateInput.value;
+    updateFinancialReports();
 
     updateUI();
 });
@@ -363,6 +425,7 @@ filterFromDateInput.addEventListener("change", function () {
 filterToDateInput.addEventListener("change", function () {
 
     filterToDate = filterToDateInput.value;
+    updateFinancialReports();
 
     updateUI();
 });
@@ -425,6 +488,90 @@ function updateChart(income, expenses) {
     });
 }
 
+function updateFinancialReports() {
+    const fromDate = reportFromDateInput.value;
+    const toDate = reportToDateInput.value;
+
+    let reportTransactions = transactions;
+
+    if (fromDate || toDate) {
+        reportTransactions = transactions.filter(function (transaction) {
+            if (!transaction.date) {
+                return false;
+            }
+
+            if (fromDate && transaction.date < fromDate) {
+                return false;
+            }
+
+            if (toDate && transaction.date > toDate) {
+                return false;
+            }
+
+            return true;
+        });
+    }
+
+    let totalIncome = 0;
+    let totalExpenses = 0;
+    let expenseCount = 0;
+
+    const expenseCategories = {};
+
+    reportTransactions.forEach(function (transaction) {
+        const amount = Number(transaction.amount) || 0;
+
+        if (transaction.type === "income") {
+            totalIncome += amount;
+        } else if (transaction.type === "expense") {
+            totalExpenses += amount;
+            expenseCount++;
+
+            const category = transaction.category || "other";
+
+            if (!expenseCategories[category]) {
+                expenseCategories[category] = 0;
+            }
+
+            expenseCategories[category] += amount;
+        }
+    });
+
+    const netBalance = totalIncome - totalExpenses;
+
+    let highestExpenseCategory = "-";
+    let highestExpenseAmount = 0;
+
+    Object.keys(expenseCategories).forEach(function (category) {
+        if (expenseCategories[category] > highestExpenseAmount) {
+            highestExpenseAmount = expenseCategories[category];
+            highestExpenseCategory = category;
+        }
+    });
+
+    const averageExpense =
+        expenseCount > 0
+            ? totalExpenses / expenseCount
+            : 0;
+
+    reportTotalIncomeElement.textContent =
+        formatCurrency(totalIncome);
+
+    reportTotalExpensesElement.textContent =
+        formatCurrency(totalExpenses);
+
+    reportNetBalanceElement.textContent =
+        formatCurrency(netBalance);
+
+    reportTransactionCountElement.textContent =
+        reportTransactions.length;
+
+    reportHighestExpenseCategoryElement.textContent =
+        highestExpenseCategory;
+
+    reportAverageExpenseElement.textContent =
+        formatCurrency(averageExpense);
+}
 function updateCategoryReport() {
     const categories = {
         food: { income: 0, expense: 0 },
@@ -700,6 +847,7 @@ if (
         `$${expenses.toFixed(2)}`;
     updateChart(income, expenses);
     updateCategoryReport();
+    updateFinancialReports();
 }
 const exportButton = document.getElementById("export-csv");
 
