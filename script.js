@@ -79,6 +79,24 @@ const translations = {
         balance: "Current Balance",
         income: "Income",
         expenses: "Expenses",
+        chartTitle: "Income & Expenses",
+
+        monthlyReport: "Monthly Report",
+        selectMonth: "Select Month",
+        balanceLabel: "Balance",
+
+        categoryReport: "Category Report",
+
+        monthlyBudget: "Monthly Budget",
+        setBudget: "Set Budget",
+        budgetPlaceholder: "Enter budget",
+        spent: "Spent",
+        remaining: "Remaining",
+        budgetMessage: "Set a budget for this month.",
+        budgetExceeded: "Budget exceeded.",
+        budgetWarning: "Warning: You are close to your budget.",
+        budgetWithin: "You are within your budget.",
+
         financialReports: "Financial Reports",
         reportFrom: "From",
         reportTo: "To",
@@ -88,26 +106,54 @@ const translations = {
         reportTransactions: "Transactions",
         highestExpenseCategory: "Highest Expense Category",
         averageExpense: "Average Expense",
+
         addTransaction: "Add Transaction",
         description: "Description",
         descriptionPlaceholder: "e.g. Salary, Food, Shopping",
         amount: "Amount",
         amountPlaceholder: "Enter amount",
         type: "Type",
-date: "Date",
+        date: "Date",
         incomeOption: "Income",
         expenseOption: "Expense",
+
         transactions: "Transactions",
+        category: "Category",
+        fromDate: "From Date",
+        toDate: "To Date",
+        filterAll: "All",
+        filterIncome: "Income",
+        filterExpense: "Expenses",
+        allCategories: "All Categories",
+
+        sort: "Sort:",
+        newestFirst: "Newest First",
+        oldestFirst: "Oldest First",
+        highestAmount: "Highest Amount",
+        lowestAmount: "Lowest Amount",
+
+        exportCsv: "Export CSV",
+        save: "Save",
+        cancel: "Cancel",
+
         incomeType: "Income",
         expenseType: "Expense",
+
         invalid: "Please enter a valid description and amount.",
         darkMode: "🌙 Dark Mode",
-lightMode: "☀️ Light Mode",
-edit: "✏️ Edit",
-delete: "🗑️ Delete",
-filterAll: "All",
-filterIncome: "Income",
-filterExpense: "Expenses"
+        lightMode: "☀️ Light Mode",
+        edit: "✏️ Edit",
+        delete: "🗑️ Delete",
+
+        categories: {
+            food: "Food",
+            transport: "Transport",
+            bills: "Bills",
+            shopping: "Shopping",
+            health: "Health",
+            entertainment: "Entertainment",
+            other: "Other"
+        }
     },
 
     de: {
@@ -117,6 +163,24 @@ filterExpense: "Expenses"
         balance: "Aktueller Kontostand",
         income: "Einnahmen",
         expenses: "Ausgaben",
+        chartTitle: "Einnahmen & Ausgaben",
+
+        monthlyReport: "Monatsbericht",
+        selectMonth: "Monat auswählen",
+        balanceLabel: "Kontostand",
+
+        categoryReport: "Kategorienbericht",
+
+        monthlyBudget: "Monatsbudget",
+        setBudget: "Budget festlegen",
+        budgetPlaceholder: "Budget eingeben",
+        spent: "Ausgegeben",
+        remaining: "Verbleibend",
+        budgetMessage: "Legen Sie ein Budget für diesen Monat fest.",
+        budgetExceeded: "Budget überschritten.",
+        budgetWarning: "Warnung: Sie nähern sich Ihrem Budget.",
+        budgetWithin: "Sie liegen innerhalb Ihres Budgets.",
+
         financialReports: "Finanzberichte",
         reportFrom: "Von",
         reportTo: "Bis",
@@ -124,29 +188,56 @@ filterExpense: "Expenses"
         totalExpenses: "Gesamtausgaben",
         netBalance: "Nettosaldo",
         reportTransactions: "Transaktionen",
-        highestExpenseCategory: "Kategorie mit den h�chsten Ausgaben",
+        highestExpenseCategory: "Kategorie mit den höchsten Ausgaben",
         averageExpense: "Durchschnittliche Ausgabe",
+
         addTransaction: "Transaktion hinzufügen",
         description: "Beschreibung",
-        descriptionPlaceholder: "z. B. Gehalt, Essen, Einkaufen",
+        descriptionPlaceholder: "z. B. Gehalt, Lebensmittel, Einkaufen",
         amount: "Betrag",
         amountPlaceholder: "Betrag eingeben",
         type: "Art",
-date: "Datum",
+        date: "Datum",
         incomeOption: "Einnahme",
         expenseOption: "Ausgabe",
+
         transactions: "Transaktionen",
+        category: "Kategorie",
+        fromDate: "Von Datum",
+        toDate: "Bis Datum",
+        filterAll: "Alle",
+        filterIncome: "Einnahmen",
+        filterExpense: "Ausgaben",
+        allCategories: "Alle Kategorien",
+
+        sort: "Sortieren:",
+        newestFirst: "Neueste zuerst",
+        oldestFirst: "Älteste zuerst",
+        highestAmount: "Höchster Betrag",
+        lowestAmount: "Niedrigster Betrag",
+
+        exportCsv: "CSV exportieren",
+        save: "Speichern",
+        cancel: "Abbrechen",
+
         incomeType: "Einnahme",
         expenseType: "Ausgabe",
+
         invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
         darkMode: "🌙 Dunkelmodus",
-lightMode: "☀️ Hellmodus",
-edit: "✏️ Bearbeiten",
-delete: "🗑️ Löschen",
-filterAll: "Alle",
-filterIncome: "Einnahmen",
-filterExpense: "Ausgaben"
+        lightMode: "☀️ Hellmodus",
+        edit: "✏️ Bearbeiten",
+        delete: "🗑️ Löschen",
 
+        categories: {
+            food: "Lebensmittel",
+            transport: "Transport",
+            bills: "Rechnungen",
+            shopping: "Einkaufen",
+            health: "Gesundheit",
+            entertainment: "Unterhaltung",
+            other: "Sonstiges"
+        }
     }
 };
 transactionList.addEventListener("click", function (event) {
@@ -256,17 +347,27 @@ function updateLanguage() {
     const t = translations[currentLanguage];
 
     document.documentElement.lang = currentLanguage;
-document.getElementById("chart-title").textContent =
-    t.chartTitle;
+
     document.querySelector(".language-switcher label").textContent =
         t.language;
 
-    document.getElementById("app-title").textContent = t.title;
-    document.getElementById("app-subtitle").textContent = t.subtitle;
-    document.getElementById("balance-title").textContent = t.balance;
+    document.getElementById("app-title").textContent =
+        t.title;
 
-    document.getElementById("income-title").textContent = t.income;
-    document.getElementById("expense-title").textContent = t.expenses;
+    document.getElementById("app-subtitle").textContent =
+        t.subtitle;
+
+    document.getElementById("balance-title").textContent =
+        t.balance;
+
+    document.getElementById("income-title").textContent =
+        t.income;
+
+    document.getElementById("expense-title").textContent =
+        t.expenses;
+
+    document.getElementById("chart-title").textContent =
+        t.chartTitle;
 
     document.getElementById("add-title").textContent =
         t.addTransaction;
@@ -279,6 +380,9 @@ document.getElementById("chart-title").textContent =
 
     document.getElementById("type-label").textContent =
         t.type;
+
+    document.getElementById("date-label").textContent =
+        t.date;
 
     descriptionInput.placeholder =
         t.descriptionPlaceholder;
@@ -297,43 +401,207 @@ document.getElementById("chart-title").textContent =
 
     document.getElementById("transactions-title").textContent =
         t.transactions;
-document.querySelector('[data-filter="all"]').textContent =
-    t.filterAll;
 
-document.querySelector('[data-filter="income"]').textContent =
-    t.filterIncome;
+    document.querySelector('[data-filter="all"]').textContent =
+        t.filterAll;
 
-document.querySelector('[data-filter="expense"]').textContent =
-    t.filterExpense;
+    document.querySelector('[data-filter="income"]').textContent =
+        t.filterIncome;
+
+    document.querySelector('[data-filter="expense"]').textContent =
+        t.filterExpense;
+
+    document.getElementById("monthly-report-title").textContent =
+        t.monthlyReport;
+
+    document.getElementById("report-month-label").textContent =
+        t.selectMonth;
+
+    document.getElementById("monthly-income-title").textContent =
+        t.income;
+
+    document.getElementById("monthly-expense-title").textContent =
+        t.expenses;
+
+    document.getElementById("monthly-balance-title").textContent =
+        t.balanceLabel;
+
+    document.getElementById("category-report-title").textContent =
+        t.categoryReport;
+
+    document.getElementById("category-food-title").textContent =
+        t.categories.food;
+
+    document.getElementById("category-transport-title").textContent =
+        t.categories.transport;
+
+    document.getElementById("category-bills-title").textContent =
+        t.categories.bills;
+
+    document.getElementById("category-shopping-title").textContent =
+        t.categories.shopping;
+
+    document.getElementById("category-health-title").textContent =
+        t.categories.health;
+
+    document.getElementById("category-entertainment-title").textContent =
+        t.categories.entertainment;
+
+    document.getElementById("category-other-title").textContent =
+        t.categories.other;
+
+    document.getElementById("monthly-budget-title").textContent =
+        t.monthlyBudget;
+
+    document.getElementById("monthly-budget-label").textContent =
+        t.setBudget;
+
+    document.getElementById("monthly-budget-input").placeholder =
+        t.budgetPlaceholder;
+
+    document.getElementById("budget-spent-title").textContent =
+        t.spent;
+
+    document.getElementById("budget-remaining-title").textContent =
+        t.remaining;
+
     document.getElementById("financial-reports-title").textContent =
-    t.financialReports;
+        t.financialReports;
 
-document.getElementById("report-from-date-label").textContent =
-    t.reportFrom;
+    document.getElementById("report-from-date-label").textContent =
+        t.reportFrom;
 
-document.getElementById("report-to-date-label").textContent =
-    t.reportTo;
+    document.getElementById("report-to-date-label").textContent =
+        t.reportTo;
 
-document.getElementById("report-total-income-title").textContent =
-    t.totalIncome;
+    document.getElementById("report-total-income-title").textContent =
+        t.totalIncome;
 
-document.getElementById("report-total-expenses-title").textContent =
-    t.totalExpenses;
+    document.getElementById("report-total-expenses-title").textContent =
+        t.totalExpenses;
 
-document.getElementById("report-net-balance-title").textContent =
-    t.netBalance;
+    document.getElementById("report-net-balance-title").textContent =
+        t.netBalance;
 
-document.getElementById("report-transaction-count-title").textContent =
-    t.reportTransactions;
+    document.getElementById("report-transaction-count-title").textContent =
+        t.reportTransactions;
 
-document.getElementById("report-highest-expense-title").textContent =
-    t.highestExpenseCategory;
+    document.getElementById("report-highest-expense-title").textContent =
+        t.highestExpenseCategory;
 
-document.getElementById("report-average-expense-title").textContent =
-    t.averageExpense;
+    document.getElementById("report-average-expense-title").textContent =
+        t.averageExpense;
+
+    document.getElementById("filter-from-date-label").textContent =
+        t.fromDate;
+
+    document.getElementById("filter-to-date-label").textContent =
+        t.toDate;
+
+    document.getElementById("category-filter-label").textContent =
+        t.category;
+
+    document.getElementById("sort-select-label").textContent =
+        t.sort;
+
+    document.querySelector('#category-filter option[value="all"]').textContent =
+        t.allCategories;
+
+    document.querySelector('#category-filter option[value="food"]').textContent =
+        t.categories.food;
+
+    document.querySelector('#category-filter option[value="transport"]').textContent =
+        t.categories.transport;
+
+    document.querySelector('#category-filter option[value="bills"]').textContent =
+        t.categories.bills;
+
+    document.querySelector('#category-filter option[value="shopping"]').textContent =
+        t.categories.shopping;
+
+    document.querySelector('#category-filter option[value="health"]').textContent =
+        t.categories.health;
+
+    document.querySelector('#category-filter option[value="entertainment"]').textContent =
+        t.categories.entertainment;
+
+    document.querySelector('#category-filter option[value="other"]').textContent =
+        t.categories.other;
+
+    document.querySelector('#sort-select option[value="date-desc"]').textContent =
+        t.newestFirst;
+
+    document.querySelector('#sort-select option[value="date-asc"]').textContent =
+        t.oldestFirst;
+
+    document.querySelector('#sort-select option[value="amount-desc"]').textContent =
+        t.highestAmount;
+
+    document.querySelector('#sort-select option[value="amount-asc"]').textContent =
+        t.lowestAmount;
+
+    document.getElementById("export-csv").textContent =
+        t.exportCsv;
+
+    document.getElementById("category-label").textContent =
+        t.category;
+
+    document.querySelector('#category option[value="food"]').textContent =
+        t.categories.food;
+
+    document.querySelector('#category option[value="transport"]').textContent =
+        t.categories.transport;
+
+    document.querySelector('#category option[value="bills"]').textContent =
+        t.categories.bills;
+
+    document.querySelector('#category option[value="shopping"]').textContent =
+        t.categories.shopping;
+
+    document.querySelector('#category option[value="health"]').textContent =
+        t.categories.health;
+
+    document.querySelector('#category option[value="entertainment"]').textContent =
+        t.categories.entertainment;
+
+    document.querySelector('#category option[value="other"]').textContent =
+        t.categories.other;
+
+    document.getElementById("edit-category-label").textContent =
+        t.category;
+
+    document.getElementById("edit-date-label").textContent =
+        t.date;
+
+    document.querySelector('#edit-category option[value="food"]').textContent =
+        t.categories.food;
+
+    document.querySelector('#edit-category option[value="transport"]').textContent =
+        t.categories.transport;
+
+    document.querySelector('#edit-category option[value="bills"]').textContent =
+        t.categories.bills;
+
+    document.querySelector('#edit-category option[value="shopping"]').textContent =
+        t.categories.shopping;
+
+    document.querySelector('#edit-category option[value="health"]').textContent =
+        t.categories.health;
+
+    document.querySelector('#edit-category option[value="entertainment"]').textContent =
+        t.categories.entertainment;
+
+    document.querySelector('#edit-category option[value="other"]').textContent =
+        t.categories.other;
+
+    document.getElementById("edit-save-button").textContent =
+        t.save;
+
+    document.getElementById("edit-cancel-button").textContent =
+        t.cancel;
+
     updateThemeButton();
 }
-
 function updateThemeButton() {
     const t = translations[currentLanguage];
 
@@ -567,7 +835,9 @@ function updateFinancialReports() {
         reportTransactions.length;
 
     reportHighestExpenseCategoryElement.textContent =
-        highestExpenseCategory;
+        highestExpenseCategory === "-"
+            ? "-"
+            : translations[currentLanguage].categories[highestExpenseCategory];
 
     reportAverageExpenseElement.textContent =
         formatCurrency(averageExpense);
@@ -620,13 +890,13 @@ function updateCategoryReport() {
         formatCurrency(categories.other.expense);
 
     const labels = [
-        "Food",
-        "Transport",
-        "Bills",
-        "Shopping",
-        "Health",
-        "Entertainment",
-        "Other"
+        translations[currentLanguage].categories.food,
+        translations[currentLanguage].categories.transport,
+        translations[currentLanguage].categories.bills,
+        translations[currentLanguage].categories.shopping,
+        translations[currentLanguage].categories.health,
+        translations[currentLanguage].categories.entertainment,
+        translations[currentLanguage].categories.other
     ];
 
     const incomeData = [
@@ -813,7 +1083,7 @@ if (
 <div class="transaction-info">
     <h3>${transaction.description}</h3>
     <span>${typeText}</span>
-    <span>Category: ${transaction.category || "other"}</span>
+    <span>${translations[currentLanguage].category}: ${translations[currentLanguage].categories[transaction.category || "other"]}</span>
     <small>${transaction.date || ""}</small>
 </div>
 
@@ -1009,7 +1279,7 @@ function updateMonthlyBudget() {
         budgetProgressElement.style.width = "0%";
         budgetProgressElement.style.background = "#159447";
         budgetPercentageElement.textContent = "0%";
-        budgetMessageElement.textContent = "Set a budget for this month.";
+        budgetMessageElement.textContent = translations[currentLanguage].budgetMessage;
         return;
     }
 
@@ -1021,13 +1291,13 @@ function updateMonthlyBudget() {
 
     if (percentage >= 100) {
         budgetProgressElement.style.background = "#d93636";
-        budgetMessageElement.textContent = "Budget exceeded.";
+        budgetMessageElement.textContent = translations[currentLanguage].budgetExceeded;
     } else if (percentage >= 80) {
         budgetProgressElement.style.background = "#f39c12";
-        budgetMessageElement.textContent = "Warning: You are close to your budget.";
+        budgetMessageElement.textContent = translations[currentLanguage].budgetWarning;
     } else {
         budgetProgressElement.style.background = "#159447";
-        budgetMessageElement.textContent = "You are within your budget.";
+        budgetMessageElement.textContent = translations[currentLanguage].budgetWithin;
     }
 }
 
