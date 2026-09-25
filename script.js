@@ -1472,3 +1472,206 @@ applyTheme();
 updateUI();
 updateMonthlyBudget();
 updateUI();
+
+/* ================================
+   Import CSV
+================================ */
+
+const importButton = document.getElementById("import-csv");
+const importFileInput = document.getElementById("import-csv-file");
+
+function parseCSVLine(line) {
+    const values = [];
+    let current = "";
+    let insideQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+            if (insideQuotes && line[i + 1] === '"') {
+                current += '"';
+                i++;
+            } else {
+                insideQuotes = !insideQuotes;
+            }
+        } else if (char === "," && !insideQuotes) {
+            values.push(current);
+            current = "";
+        } else {
+            current += char;
+        }
+    }
+
+    values.push(current);
+
+    return values;
+}
+
+function normalizeCSVDate(value) {
+    const date = value.trim();
+
+    if (!date) {
+        return "";
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        const [year, month, day] = date.split("-").map(Number);
+        const testDate = new Date(Date.UTC(year, month - 1, day));
+
+        if (
+            testDate.getUTCFullYear() === year &&
+            testDate.getUTCMonth() === month - 1 &&
+            testDate.getUTCDate() === day
+        ) {
+            return date;
+        }
+
+        throw new Error("Invalid date");
+    }
+
+    const match = date.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+
+    if (match) {
+        const month = Number(match[1]);
+        const day = Number(match[2]);
+        const year = Number(match[3]);
+
+        const testDate = new Date(Date.UTC(year, month - 1, day));
+
+        if (
+            testDate.getUTCFullYear() !== year ||
+            testDate.getUTCMonth() !== month - 1 ||
+            testDate.getUTCDate() !== day
+        ) {
+            throw new Error("Invalid date");
+        }
+
+        return `${year.toString().padStart(4, "0")}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
+    }
+
+    throw new Error("Invalid date");
+}
+
+function importCSV(event) {
+    const file = event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function (loadEvent) {
+        try {
+            const text = loadEvent.target.result
+                .replace(/^\uFEFF/, "")
+                .trim();
+
+            if (!text) {
+                throw new Error("Empty CSV");
+            }
+
+            const lines = text.split(/\r?\n/);
+
+            if (lines.length < 2) {
+                throw new Error("No transactions");
+            }
+
+            const headers = parseCSVLine(lines[0]).map(function (header) {
+                return header.trim();
+            });
+
+            const expectedHeaders = [
+                "Date",
+                "Description",
+                "Type",
+                "Amount"
+            ];
+
+            if (
+                headers.length !== expectedHeaders.length ||
+                !headers.every(function (header, index) {
+                    return header === expectedHeaders[index];
+                })
+            ) {
+                throw new Error("Invalid headers");
+            }
+
+            const importedTransactions = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) {
+                    continue;
+                }
+
+                const values = parseCSVLine(lines[i]);
+
+                if (values.length !== 4) {
+                    throw new Error("Invalid row");
+                }
+
+                const date = normalizeCSVDate(values[0]);
+                const description = values[1].trim();
+                const type = values[2].trim().toLowerCase();
+                const amount = Number(values[3].trim());
+
+                if (
+                    !description ||
+                    !["income", "expense"].includes(type) ||
+                    !Number.isFinite(amount) ||
+                    amount <= 0
+                ) {
+                    throw new Error("Invalid transaction");
+                }
+
+                if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+                    throw new Error("Invalid date");
+                }
+
+                importedTransactions.push({
+                    id: Date.now() + i,
+                    description: description,
+                    amount: amount,
+                    type: type,
+                    category: "other",
+                    date: date
+                });
+            }
+
+            if (importedTransactions.length === 0) {
+                throw new Error("No transactions");
+            }
+
+            transactions = transactions.concat(importedTransactions);
+
+            saveTransactions();
+            updateUI();
+
+            alert(
+                currentLanguage === "de"
+                    ? "CSV erfolgreich importiert."
+                    : "CSV imported successfully."
+            );
+
+        } catch (error) {
+            alert(
+                currentLanguage === "de"
+                    ? "Ungültige CSV-Datei."
+                    : "Invalid CSV file."
+            );
+        }
+
+        importFileInput.value = "";
+    };
+
+    reader.readAsText(file);
+}
+
+if (importButton && importFileInput) {
+    importButton.addEventListener("click", function () {
+        importFileInput.click();
+    });
+
+    importFileInput.addEventListener("change", importCSV);
+}
