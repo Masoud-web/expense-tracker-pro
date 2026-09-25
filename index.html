@@ -331,6 +331,35 @@
             </form>
         </section>
 
+        <section class="backup-restore">
+            <h2 id="backup-restore-title">Backup & Restore</h2>
+
+            <div class="backup-action">
+                <p id="backup-description">
+                    Create a backup of your data
+                </p>
+                <button type="button" id="backup-data-button">
+                    Backup Data
+                </button>
+            </div>
+
+            <div class="restore-action">
+                <p id="restore-description">
+                    Restore your data
+                </p>
+                <input
+                    type="file"
+                    id="restore-file"
+                    accept=".json,application/json"
+                    hidden
+                >
+                <button type="button" id="restore-data-button">
+                    Restore Data
+                </button>
+            </div>
+
+            <p id="backup-restore-message"></p>
+        </section>
         <section class="transactions-section">
             <h2 id="transactions-title">Transactions</h2>
 

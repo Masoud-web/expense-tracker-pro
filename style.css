@@ -1,4 +1,4 @@
-﻿* {
+* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -536,6 +536,45 @@ body.dark-mode .budget-progress-bar {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+/* ================================
+   Backup & Restore
+================================ */
+
+.backup-restore {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.backup-restore h2 {
+    margin-bottom: 20px;
+}
+
+.backup-action,
+.restore-action {
+    margin-bottom: 20px;
+}
+
+.backup-action p,
+.restore-action p {
+    margin-bottom: 10px;
+}
+
+#backup-restore-message {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+#restore-file {
+    display: none;
+}
+
+body.dark-mode .backup-restore {
+    background: #242424;
+    color: #f5f5f5;
 }
 /* ================================
    Financial Reports
