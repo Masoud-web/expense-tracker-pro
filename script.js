@@ -133,6 +133,13 @@ const translations = {
         lowestAmount: "Lowest Amount",
 
         exportCsv: "Export CSV",
+        backupRestore: "Backup & Restore",
+        backupDescription: "Create a backup of your data",
+        backupData: "Backup Data",
+        restoreDescription: "Restore your data",
+        restoreData: "Restore Data",
+        backupSuccess: "Backup created successfully.",
+        invalidBackup: "Invalid backup file.",
         save: "Save",
         cancel: "Cancel",
 
@@ -217,6 +224,13 @@ const translations = {
         lowestAmount: "Niedrigster Betrag",
 
         exportCsv: "CSV exportieren",
+        backupRestore: "Backup & Wiederherstellen",
+        backupDescription: "Erstelle eine Sicherung deiner Daten",
+        backupData: "Daten sichern",
+        restoreDescription: "Stelle deine Daten wieder her",
+        restoreData: "Daten wiederherstellen",
+        backupSuccess: "Sicherung erfolgreich erstellt.",
+        invalidBackup: "Ungültige Sicherungsdatei.",
         save: "Speichern",
         cancel: "Abbrechen",
 
@@ -542,6 +556,21 @@ function updateLanguage() {
 
     document.getElementById("export-csv").textContent =
         t.exportCsv;
+
+      document.getElementById("backup-restore-title").textContent =
+          t.backupRestore;
+
+      document.getElementById("backup-description").textContent =
+          t.backupDescription;
+
+      document.getElementById("backup-data-button").textContent =
+          t.backupData;
+
+      document.getElementById("restore-description").textContent =
+          t.restoreDescription;
+
+      document.getElementById("restore-data-button").textContent =
+          t.restoreData;
 
     document.getElementById("category-label").textContent =
         t.category;
@@ -1316,6 +1345,128 @@ updateMonthlyReport = function () {
 };
 
 
+/* ================================
+   Backup & Restore
+================================ */
+
+const backupButton = document.getElementById("backup-data-button");
+const restoreButton = document.getElementById("restore-data-button");
+const restoreFileInput = document.getElementById("restore-file");
+const backupRestoreMessage = document.getElementById("backup-restore-message");
+
+function showBackupRestoreMessage(message) {
+    if (backupRestoreMessage) {
+        backupRestoreMessage.textContent = message;
+    }
+}
+
+function backupData() {
+    const backup = {
+        version: 1,
+        transactions: transactions,
+        language: currentLanguage,
+        darkMode: darkMode,
+        monthlyBudgets: JSON.parse(
+            localStorage.getItem("expenseTrackerMonthlyBudgets")
+        ) || {}
+    };
+
+    const json = JSON.stringify(backup, null, 2);
+    const blob = new Blob([json], {
+        type: "application/json"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "expense-tracker-backup.json";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+
+    showBackupRestoreMessage(
+        translations[currentLanguage].backupSuccess
+    );
+}
+
+function restoreData(event) {
+    const file = event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function (loadEvent) {
+        try {
+            const backup = JSON.parse(loadEvent.target.result);
+
+            if (
+                !backup ||
+                typeof backup !== "object" ||
+                backup.version !== 1 ||
+                !Array.isArray(backup.transactions) ||
+                !["en", "de"].includes(backup.language) ||
+                typeof backup.darkMode !== "boolean" ||
+                !backup.monthlyBudgets ||
+                typeof backup.monthlyBudgets !== "object" ||
+                Array.isArray(backup.monthlyBudgets)
+            ) {
+                throw new Error("Invalid backup");
+            }
+
+            localStorage.setItem(
+                "expenseTrackerTransactions",
+                JSON.stringify(backup.transactions)
+            );
+
+            localStorage.setItem(
+                "expenseTrackerLanguage",
+                backup.language
+            );
+
+            localStorage.setItem(
+                "expenseTrackerDarkMode",
+                String(backup.darkMode)
+            );
+
+            localStorage.setItem(
+                "expenseTrackerMonthlyBudgets",
+                JSON.stringify(backup.monthlyBudgets)
+            );
+
+            location.reload();
+
+        } catch (error) {
+            showBackupRestoreMessage(
+                translations[currentLanguage].invalidBackup
+            );
+        }
+
+        restoreFileInput.value = "";
+    };
+
+    reader.readAsText(file);
+}
+
+if (backupButton) {
+    backupButton.addEventListener("click", backupData);
+}
+
+if (restoreButton) {
+    restoreButton.addEventListener("click", function () {
+        restoreFileInput.click();
+    });
+}
+
+if (restoreFileInput) {
+    restoreFileInput.addEventListener("change", restoreData);
+}
 updateLanguage();
 applyTheme();
 updateUI();
