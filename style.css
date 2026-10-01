@@ -664,3 +664,14 @@ body.dark-mode .report-highlight {
         grid-template-columns: 1fr;
     }
 }
+
+#undo-message {
+    margin-top: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+#undo-message.hidden {
+    display: none;
+}
+
