@@ -8,6 +8,7 @@ const balanceElement = document.getElementById("balance");
 const incomeElement = document.getElementById("income");
 const expensesElement = document.getElementById("expenses");
 const transactionList = document.getElementById("transaction-list");
+const undoMessage = document.getElementById("undo-message");
 const editModal = document.getElementById("edit-modal");
 const editDescriptionInput = document.getElementById("edit-description");
 const editAmountInput = document.getElementById("edit-amount");
@@ -16,6 +17,8 @@ const editDateInput = document.getElementById("edit-date");
 const editSaveButton = document.getElementById("edit-save-button");
 const editCancelButton = document.getElementById("edit-cancel-button");
 let editingTransactionId = null;
+let lastDeletedTransaction = null;
+let undoTimer = null;
 const languageSelect = document.getElementById("language-select");
 const themeToggle = document.getElementById("theme-toggle");
 const filterButtons =
@@ -147,10 +150,12 @@ const translations = {
         expenseType: "Expense",
 
         invalid: "Please enter a valid description and amount.",
-        darkMode: "🌙 Dark Mode",
-        lightMode: "☀️ Light Mode",
-        edit: "✏️ Edit",
-        delete: "🗑️ Delete",
+            darkMode: "🌙 Dark Mode",
+            lightMode: "☀️ Light Mode",
+            edit: "✏️ Edit",
+            delete: "🗑️ Delete",
+        deleteSuccess: "Transaction deleted.",
+        undo: "Undo",
 
         categories: {
             food: "Food",
@@ -173,7 +178,7 @@ const translations = {
         chartTitle: "Einnahmen & Ausgaben",
 
         monthlyReport: "Monatsbericht",
-        selectMonth: "Monat auswählen",
+            selectMonth: "Monat auswählen",
         balanceLabel: "Kontostand",
 
         categoryReport: "Kategorienbericht",
@@ -183,9 +188,9 @@ const translations = {
         budgetPlaceholder: "Budget eingeben",
         spent: "Ausgegeben",
         remaining: "Verbleibend",
-        budgetMessage: "Legen Sie ein Budget für diesen Monat fest.",
-        budgetExceeded: "Budget überschritten.",
-        budgetWarning: "Warnung: Sie nähern sich Ihrem Budget.",
+            budgetMessage: "Legen Sie ein Budget für diesen Monat fest.",
+            budgetExceeded: "Budget überschritten.",
+            budgetWarning: "Warnung: Sie nähern sich Ihrem Budget.",
         budgetWithin: "Sie liegen innerhalb Ihres Budgets.",
 
         financialReports: "Finanzberichte",
@@ -195,10 +200,10 @@ const translations = {
         totalExpenses: "Gesamtausgaben",
         netBalance: "Nettosaldo",
         reportTransactions: "Transaktionen",
-        highestExpenseCategory: "Kategorie mit den höchsten Ausgaben",
+            highestExpenseCategory: "Kategorie mit den höchsten Ausgaben",
         averageExpense: "Durchschnittliche Ausgabe",
 
-        addTransaction: "Transaktion hinzufügen",
+            addTransaction: "Transaktion hinzufügen",
         description: "Beschreibung",
         descriptionPlaceholder: "z. B. Gehalt, Lebensmittel, Einkaufen",
         amount: "Betrag",
@@ -219,8 +224,8 @@ const translations = {
 
         sort: "Sortieren:",
         newestFirst: "Neueste zuerst",
-        oldestFirst: "Älteste zuerst",
-        highestAmount: "Höchster Betrag",
+            oldestFirst: "Älteste zuerst",
+            highestAmount: "Höchster Betrag",
         lowestAmount: "Niedrigster Betrag",
 
         exportCsv: "CSV exportieren",
@@ -230,18 +235,20 @@ const translations = {
         restoreDescription: "Stelle deine Daten wieder her",
         restoreData: "Daten wiederherstellen",
         backupSuccess: "Sicherung erfolgreich erstellt.",
-        invalidBackup: "Ungültige Sicherungsdatei.",
+            invalidBackup: "Ungültige Sicherungsdatei.",
         save: "Speichern",
         cancel: "Abbrechen",
 
         incomeType: "Einnahme",
         expenseType: "Ausgabe",
 
-        invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
-        darkMode: "🌙 Dunkelmodus",
-        lightMode: "☀️ Hellmodus",
-        edit: "✏️ Bearbeiten",
-        delete: "🗑️ Löschen",
+            invalid: "Bitte geben Sie eine gültige Beschreibung und einen gültigen Betrag ein.",
+            darkMode: "🌙 Dunkelmodus",
+            lightMode: "☀️ Hellmodus",
+        deleteSuccess: "Transaktion gelöscht.",
+        undo: "Rückgängig",
+            edit: "✏️ Bearbeiten",
+            delete: "🗑️ Löschen",
 
         categories: {
             food: "Lebensmittel",
@@ -290,12 +297,31 @@ transactionList.addEventListener("click", function (event) {
 
     const id = Number(deleteButton.dataset.id);
 
+    const deletedTransaction = transactions.find(function (transaction) {
+        return transaction.id === id;
+    });
+
+    if (!deletedTransaction) {
+        return;
+    }
+
+    lastDeletedTransaction = deletedTransaction;
+
     transactions = transactions.filter(function (transaction) {
         return transaction.id !== id;
     });
 
     saveTransactions();
-    updateUI();
+        updateUI();
+
+        undoMessage.innerHTML = translations[currentLanguage].deleteSuccess + ' <button type="button" id="undo-delete-button">' + translations[currentLanguage].undo + '</button>';
+        undoMessage.classList.remove("hidden");
+
+        clearTimeout(undoTimer);
+        undoTimer = setTimeout(function () {
+            lastDeletedTransaction = null;
+            undoMessage.classList.add("hidden");
+        }, 5000);
 });
 editSaveButton.addEventListener("click", function () {
     if (editingTransactionId === null) {
@@ -629,7 +655,8 @@ function updateLanguage() {
     document.getElementById("edit-cancel-button").textContent =
         t.cancel;
 
-    updateThemeButton();
+        updateMonthlyBudget();
+        updateThemeButton();
 }
 function updateThemeButton() {
     const t = translations[currentLanguage];
@@ -1657,7 +1684,7 @@ function importCSV(event) {
         } catch (error) {
             alert(
                 currentLanguage === "de"
-                    ? "Ungültige CSV-Datei."
+                       ? "Ungültige CSV-Datei."
                     : "Invalid CSV file."
             );
         }
@@ -1675,3 +1702,26 @@ if (importButton && importFileInput) {
 
     importFileInput.addEventListener("change", importCSV);
 }
+
+function restoreLastDeletedTransaction() {
+    if (!lastDeletedTransaction) {
+        return;
+    }
+
+    transactions.push(lastDeletedTransaction);
+    lastDeletedTransaction = null;
+
+    clearTimeout(undoTimer);
+    undoMessage.classList.add("hidden");
+
+    saveTransactions();
+    updateUI();
+}
+
+
+undoMessage.addEventListener("click", function (event) {
+    if (!event.target.matches("#undo-delete-button")) {
+        return;
+    }
+    restoreLastDeletedTransaction();
+});
