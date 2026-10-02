@@ -53,6 +53,7 @@ const reportHighestExpenseCategoryElement =
     document.getElementById("report-highest-expense-category");
 const reportAverageExpenseElement =
     document.getElementById("report-average-expense");
+const printReportButton = document.getElementById("print-report-button");
 let transactions =
     JSON.parse(localStorage.getItem("expenseTrackerTransactions")) || [];
     transactions = transactions.map(function (transaction) {
@@ -1724,4 +1725,14 @@ undoMessage.addEventListener("click", function (event) {
         return;
     }
     restoreLastDeletedTransaction();
+});
+if (printReportButton) {
+    printReportButton.addEventListener("click", function () {
+        document.body.classList.add("printing-report");
+        window.print();
+    });
+}
+
+window.addEventListener("afterprint", function () {
+    document.body.classList.remove("printing-report");
 });
