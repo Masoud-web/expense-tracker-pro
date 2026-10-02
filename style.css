@@ -674,4 +674,31 @@ body.dark-mode .report-highlight {
 #undo-message.hidden {
     display: none;
 }
+@media print {
+    body.printing-report * {
+        visibility: hidden;
+    }
 
+    body.printing-report .financial-reports,
+    body.printing-report .financial-reports * {
+        visibility: visible;
+    }
+
+    body.printing-report .financial-reports {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    body.printing-report .report-actions {
+        display: none;
+    }
+
+    body.printing-report .report-controls input {
+        display: none;
+    }
+}
